@@ -28,7 +28,7 @@ Meteor.startup(function () {
 });
 
 Template.showings_list.showings = function () {
-    return Showings.find({});
+    return Showings.find({}, {sort: {movie: 1}});
 };
 
 Template.showing_times.times = function () {
