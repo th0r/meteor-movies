@@ -11,6 +11,8 @@
     <ul>
     {{#each showings}}
         <li>{{movie}} - {{>showing_times}}</li>
+    {{else}}
+        <li>No showings</li>
     {{/each}}
     </ul>
 </template>

@@ -23,15 +23,22 @@ Meteor.methods({
     },
     
     'fetchShowings': function () {
-        fetchShowings(function (err, showings) {
-            if (showings) {
+        var fetchDate = new Date();
+        
+        CinemasManager.fetchAllShowings()
+            .done(function (allShowings) {
                 Fiber(function () {
-                    showings.forEach(function (showing) {
-                        Showings.insert(showing);
+                    _.each(allShowings, function (showings) {
+                        showings.forEach(function (showing) {
+                            showings.fetchDate = fetchDate;
+                            Showings.insert(showing);
+                        });
                     });
                 }).run();
-            }
-        });
+            })
+            .fail(function () {
+                console.log.apply(null, arguments);
+            });
     },
     
     'refreshShowings': function () {
