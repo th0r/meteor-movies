@@ -1,0 +1,1 @@
+Showings = new Meteor.Collection('showings');

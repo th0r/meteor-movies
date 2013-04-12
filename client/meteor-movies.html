@@ -1,0 +1,32 @@
+<head>
+    <title>Matrix cinema showings</title>
+</head>
+
+<body>
+    {{>showings_list}}
+    {{>showings_controls}}
+</body>
+
+<template name="showings_list">
+    <ul>
+    {{#each showings}}
+        <li>{{movie}} - {{>showing_times}}</li>
+    {{/each}}
+    </ul>
+</template>
+        
+<template name="showing_times">
+    {{#if times}}
+        <span>{{times}}</span>
+    {{else}}
+        <span style="color: red">no matching showings</span>
+    {{/if}}
+</template>
+        
+<template name="showings_controls">
+    <div id="timeRange"></div>
+    <div id="timeRangeText"></div>
+    <div>
+        <span id="refreshShowings">Refresh!</span>
+    </div>
+</template>
