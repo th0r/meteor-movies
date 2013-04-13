@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="Underscore JS" type="javaScript">
+    <properties>
+      <sourceFilesUrls>
+        <item url="file://$PROJECT_DIR$/.meteor/local/build/app/packages/underscore/underscore.js" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/.meteor/local/build/app/packages/underscore/underscore.js" />
+    </CLASSES>
+    <DOCUMENTATION>
+      <root url="http://underscorejs.org/" />
+    </DOCUMENTATION>
+    <SOURCES />
+  </library>
+</component>
