@@ -9,13 +9,15 @@ function updateTimeRange(values) {
 
 Meteor.startup(function () {
     var now = moment(),
+        dayStart = 9 * 60,
+        dayEnd = (24 + 3) * 60,
         step = 30,
-        initialValues = [Math.ceil((now.hours() * 60 + now.minutes()) / step) * step, 1439];
+        initialValues = [Math.ceil((now.hours() * 60 + now.minutes()) / step) * step, dayEnd];
 
     $('#timeRange').slider({
         range: true,
-        min: 0,
-        max: 1439,
+        min: dayStart,
+        max: dayEnd,
         values: initialValues,
         step: step,
         orientation: 'horizontal',
@@ -65,20 +67,14 @@ Template.showing_times.times = function () {
         to = Session.get('showingsTo') || Number.POSITIVE_INFINITY;
 
     return this.sessions
-        .filter(function (showing) {
-            return showing.time >= from && showing.time <= to;
-        })
-        .sort(function (showing1, showing2) {
-            return showing1.time - showing2.time;
-        })
-        .map(function (showing) {
-            return moment(showing.time).format('HH:mm');
-        })
-        .join(' ');
+            .filter(function (showing) {
+                return showing.time >= from && showing.time <= to;
+            })
+            .sort(function (showing1, showing2) {
+                return showing1.time - showing2.time;
+            });
 };
 
-Template.showings_controls.events = {
-    'click #refreshShowings': function () {
-        Meteor.call('refreshShowings');
-    }
+Template.showing_times.time = function () {
+    return moment(this.time).format('HH:mm');
 };

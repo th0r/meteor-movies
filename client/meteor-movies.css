@@ -1,3 +1,24 @@
-#timeRange {
-    width: 500px;
+html, body {
+    margin: 0;
+    padding: 0;
+    }
+
+.left-column {
+    float: left;
+    width: 70%;
+    }
+
+.right-column {
+    float: left;
+    width: 30%;
+    }
+
+.showings, .controls {
+    margin: 20px;
+    }
+
+.showings {
+    }
+
+.controls {
     }

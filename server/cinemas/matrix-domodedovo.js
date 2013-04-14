@@ -1,6 +1,7 @@
 CinemasManager.addCinema('matrix-domodedovo', {
 
-    name: 'Матрица (Домодедово)',
+    name: 'Матрица Домодедово',
+    shortName: 'Матрица',
 
     showingsUrl: 'http://www.matrix-cinema.ru/?thea=domodedovo&page=seanses',
 

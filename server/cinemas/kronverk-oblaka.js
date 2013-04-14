@@ -1,11 +1,10 @@
 CinemasManager.addCinema('kronverk-oblaka', {
 
-    name: 'Кронверк Синема (Облака)',
+    name: 'Кронверк Синема Облака',
+    shortName: 'Облака',
 
     showingsUrl: 'http://www.kronverkcinema.ru/schedule/city_id_1_delta_days_0.json?_=1365778365703',
-
     responseType: 'json',
-
     parseShowingsPage: function (data) {
         return data.movies
             .filter(function (movie) {

@@ -3,8 +3,16 @@
 </head>
 
 <body>
-    {{>showings_list}}
-    {{>showings_controls}}
+    <div class="left-column">
+        <div class="showings">
+            {{>showings_list}}
+        </div>
+    </div>
+    <div class="right-column">
+        <div class="controls">
+            {{>showings_controls}}
+        </div>
+    </div>
 </body>
 
 <template name="showings_list">
@@ -16,19 +24,31 @@
     {{/each}}
     </ul>
 </template>
-        
+
 <template name="showing_times">
-    {{#if times}}
-        <span>{{times}}</span>
+    {{#each times}}
+        <span class="cinema-{{cinemaId}}">{{time}}</span>&nbsp;
     {{else}}
-        <span style="color: red">no matching showings</span>
-    {{/if}}
+        <span style="color: red">Нет сеансов в указанное время</span>
+    {{/each}}
 </template>
-        
+
 <template name="showings_controls">
+    {{>cinemas_list}}
+
     <div id="timeRange"></div>
     <div id="timeRangeText"></div>
     <div>
         <span id="refreshShowings">Refresh!</span>
+    </div>
+</template>
+
+<template name="cinemas_list">
+    <div class="cinemas">
+        {{#each cinemas}}
+            <span class="cinema-button cinema-{{ id }}" data-id="{{ id }}">{{ shortName }}</span>&nbsp;
+        {{else}}
+            <span>Список кинотеатров загружается...</span>
+        {{/each}}
     </div>
 </template>

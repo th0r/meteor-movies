@@ -1,9 +1,9 @@
 CinemasManager.addCinema('luxor-vegas', {
 
-    name: 'Люксор (Vegas)',
+    name: 'Люксор Vegas',
+    shortName: 'Vegas',
 
     showingsUrl: 'http://www.luxorfilm.ru/cinema/vegas/',
-
     parseShowingsPage: function (document) {
         var showingsRows = _.toArray(document.querySelectorAll('.cinema_time_info'));
 
