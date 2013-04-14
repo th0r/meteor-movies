@@ -1,7 +1,7 @@
 CinemasManager = {
-    
+
     cinemas: {},
-    
+
     parsers: {
         'html': function (id, cinema, dfd) {
             jsdom.env(
@@ -29,37 +29,43 @@ CinemasManager = {
             });
         }
     },
-    
+
     addCinema: function (id, cinema) {
         this.cinemas[id] = cinema;
     },
 
-    fetchAllShowings: function () {
+    fetchAllShowings: function (cb) {
         var dfds = [];
-        
+
         _.each(this.cinemas, function (cinema, id) {
-            dfds.push(this.fetchShowings(id).pipe(function (showings) {
-                return [id, showings];
-            }));
+            var dfd = this.fetchShowings(id)
+                .then(function (showings) {
+                    cb(id, null, showings);
+                }, function (error) {
+                    cb(id, error, null);
+                })
+                .pipe(function (showings) {
+                    return [id, showings];
+                }, function () {
+                    return [id].concat(_.toArray(arguments));
+                });
+
+            dfds.push(dfd);
         }, this);
 
-        return Du.when.apply(Du, dfds).pipe(function () {
-            var allShowings = {};
-
-            _.toArray(arguments).forEach(function (info) {
-                allShowings[info[0]] = info[1];
-            });
-
-            return [allShowings];
-        });
+        return Du.when(dfds).pipe(function () {
+            return _.toArray(arguments);
+        }, function (dfd) {
+            return _.toArray(arguments).slice(1);
+        })
     },
-    
+
     fetchShowings: function (id) {
         var dfd = new Du.Deferred(),
             cinema = this.cinemas[id],
             responseType,
             parser;
-        
+
         if (cinema) {
             responseType = cinema.responseType || 'html';
             parser = this.parsers[responseType];
@@ -74,5 +80,5 @@ CinemasManager = {
 
         return dfd;
     }
-    
+
 };

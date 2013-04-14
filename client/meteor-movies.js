@@ -11,7 +11,7 @@ Meteor.startup(function () {
     var now = moment(),
         step = 30,
         initialValues = [Math.ceil((now.hours() * 60 + now.minutes()) / step) * step, 1439];
-    
+
     $('#timeRange').slider({
         range: true,
         min: 0,
@@ -28,19 +28,51 @@ Meteor.startup(function () {
 });
 
 Template.showings_list.showings = function () {
-    return Showings.find({}, {sort: {movie: 1}});
+    var movies = {},
+        moviesArray = [];
+
+    Showings.find({}).fetch().forEach(function (showing) {
+        var sessions = movies[showing.movie] = movies[showing.movie] || [];
+
+        showing.sessions.forEach(function (time) {
+            sessions.push({
+                time: time,
+                cinemaId: showing.cinemaId
+            });
+        });
+    });
+
+    // Converting movies to array, sorted by movie name
+    _.each(movies, function (sessions, movie) {
+        moviesArray.push({
+            movie: movie,
+            sessions: sessions
+        });
+    });
+    moviesArray.sort(function (movie1, movie2) {
+        if (movie1.movie < movie2.movie) {
+            return -1;
+        } else {
+            return 1;
+        }
+    });
+
+    return moviesArray;
 };
 
 Template.showing_times.times = function () {
     var from = Session.get('showingsFrom') || Number.NEGATIVE_INFINITY,
         to = Session.get('showingsTo') || Number.POSITIVE_INFINITY;
-    
-    return this.showings
+
+    return this.sessions
         .filter(function (showing) {
-            return showing >= from && showing <= to;
+            return showing.time >= from && showing.time <= to;
+        })
+        .sort(function (showing1, showing2) {
+            return showing1.time - showing2.time;
         })
         .map(function (showing) {
-            return moment(showing).format('HH:mm');
+            return moment(showing.time).format('HH:mm');
         })
         .join(' ');
 };

@@ -1,5 +1,5 @@
 (function (global, undefined) {
-    
+
     var Du = global.Du = {};
 
     // ==================================== Du.extend ====================================
@@ -132,10 +132,9 @@
         return finalDeferred;
     }
 
-    function when() {
+    function when(dfds) {
         var finalDef = new Deferred(),
-            defs = _.toArray(arguments),
-            unresolved = defs.length,
+            unresolved = dfds.length,
             args = new Array(unresolved);
 
         function fail() {
@@ -144,7 +143,7 @@
             finalDef.reject.apply(finalDef, args);
         }
 
-        defs.forEach(function (def, i) {
+        dfds.forEach(function (def, i) {
             if (def instanceof Deferred) {
                 def.done(function () {
                     args[i] = _.toArray(arguments);
@@ -161,7 +160,7 @@
         if (!unresolved) {
             finalDef.resolve.apply(finalDef, args);
         }
-        
+
         return finalDef;
     }
 
@@ -196,5 +195,5 @@
 
     Du.Deferred = Deferred;
     Du.when = when;
-    
+
 }(this));
