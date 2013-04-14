@@ -1,0 +1,26 @@
+<template name="showings_controls">
+    {{>cinemas_list}}
+
+    <div id="timeRange"></div>
+    <div id="timeRangeText"></div>
+    <div>
+        <span id="refreshShowings">Refresh!</span>
+    </div>
+</template>
+
+<template name="cinemas_list">
+    <div class="cinemas">
+        {{#each cinemas}}
+            {{>cinema}}&nbsp;
+        {{else}}
+            <span>Список кинотеатров загружается...</span>
+        {{/each}}
+    </div>
+</template>
+
+<template name="cinema">
+    <label for="cinema-{{ id }}" class="cinema-{{ id }}" data-id="{{ id }}">
+        <input id="cinema-{{ id }}" class="cinema-button" type="checkbox"{{#if selected}} checked="checked"{{/if}}>
+        {{ shortName }}
+    </label>
+</template>

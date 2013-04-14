@@ -31,18 +31,30 @@ Meteor.startup(function () {
 
 Template.showings_list.showings = function () {
     var movies = {},
-        moviesArray = [];
+        moviesArray = [],
+        disabledCinemas = [];
 
-    Showings.find({}).fetch().forEach(function (showing) {
-        var sessions = movies[showing.movie] = movies[showing.movie] || [];
+    _.each(Session.get('disabledCinemas') || {}, function (disabled, cinemaId) {
+        if (disabled) {
+            disabledCinemas.push(cinemaId);
+        }
+    });
 
-        showing.sessions.forEach(function (time) {
-            sessions.push({
-                time: time,
-                cinemaId: showing.cinemaId
+    Showings
+        .find({
+            cinemaId: {$nin: disabledCinemas}
+        })
+        .fetch()
+        .forEach(function (showing) {
+            var sessions = movies[showing.movie] = movies[showing.movie] || [];
+
+            showing.sessions.forEach(function (time) {
+                sessions.push({
+                    time: time,
+                    cinemaId: showing.cinemaId
+                });
             });
         });
-    });
 
     // Converting movies to array, sorted by movie name
     _.each(movies, function (sessions, movie) {
