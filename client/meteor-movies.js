@@ -14,7 +14,7 @@ Meteor.startup(function () {
         step = 30,
         initialValues = [Math.ceil((now.hours() * 60 + now.minutes()) / step) * step, dayEnd];
 
-    $('#timeRange').slider({
+    $('.control-time-slider').slider({
         range: true,
         min: dayStart,
         max: dayEnd,
