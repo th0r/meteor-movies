@@ -6,25 +6,39 @@ CinemasManager.addCinema('kronverk-oblaka', {
     showingsUrl: 'http://www.kronverkcinema.ru/schedule/city_id_1_delta_days_0.json?_=1365778365703',
     responseType: 'json',
     parseShowingsPage: function (data) {
-        return data.movies
-            .filter(function (movie) {
-                return movie.sessions.length;
-            })
-            .map(function (movie) {
-                return {
-                    movie: movie.name,
-                    sessions: movie.sessions.map(function (session) {
-                        var time = session.time.split(':'),
-                            hours = +time[0];
+        var movies = {};
+        
+        data.movies
+            .forEach(function (movie) {
+                movie.sessions.forEach(function (session) {
+                    // Расписание идет для всех кинотеатров. Нам нужно только для нашего.
+                    if (session.cinema_id === 58) {
+                        // Добавляем приставку 3D, если это 3D сеанс
+                        var movieName = movie.name + (session.type === '3D' ? ' 3D' : ''),
+                            sessions = movies[movieName] = movies[movieName] || [],
+                            time = session.time.split(':'),
+                            hours = +time[0],
+                            sessionDate = moment().startOf('day').add({
+                                days: (hours < 4) ? 1 : 0,
+                                hours: hours,
+                                minutes: +time[1]
+                            }).toDate();
 
-                        return moment().startOf('day').add({
-                            days: (hours < 4) ? 1 : 0,
-                            hours: hours,
-                            minutes: +time[1]
-                        }).toDate();
-                    })
-                }
+                        sessions.push(sessionDate);
+                    }
+                });
             });
+        
+        // Конвертируем в нужный нам формат
+        var moviesArray = [];
+        _.each(movies, function (sessions, movie) {
+            moviesArray.push({
+                movie: movie,
+                sessions: sessions.sort()
+            });
+        });
+        
+        return moviesArray;
     }
 
 });
