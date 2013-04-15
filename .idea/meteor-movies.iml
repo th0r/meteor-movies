@@ -9,6 +9,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Underscore JS" level="project" />
+    <orderEntry type="library" name="jQuery UI Custom Build" level="project" />
   </component>
 </module>
 

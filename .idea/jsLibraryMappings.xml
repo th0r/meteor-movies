@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{Underscore JS}" />
+    <file url="PROJECT" libraries="{Underscore JS, jQuery UI Custom Build}" />
   </component>
 </project>
 
