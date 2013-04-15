@@ -7,10 +7,7 @@
 
     <div class="control control-time">
         <div class="control-title">Время:</div>
-        <div class="control-container">
-            <div class="control-time-slider"></div>
-            <div id="timeRangeText"></div>
-        </div>
+        <div class="control-container">{{>time_slider}}</div>
     </div>
 
     <div class="control control-actions">
@@ -34,4 +31,11 @@
     <input id="cinema-{{ id }}" class="cinema-button" type="checkbox"{{#if selected}} checked="checked"{{/if}}>
         <label for="cinema-{{ id }}" class="cinema-{{ id }}" data-id="{{ id }}">{{ shortName }}</label>
     </input>
+</template>
+        
+<template name="time_slider">
+    {{#constant}}
+        <div class="control-time-slider"></div>
+        <div class="control-time-text"></div>
+    {{/constant}}
 </template>

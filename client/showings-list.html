@@ -1,0 +1,17 @@
+<template name="showings_list">
+    <ul class="showings-list">
+        {{#each showings}}
+        <li class="showing">{{movie}} - {{>showing_times}}</li>
+        {{else}}
+        <li class="showing no-showing">Нет сеансов</li>
+        {{/each}}
+    </ul>
+</template>
+
+<template name="showing_times">
+    {{#each times}}
+    <span class="session cinema-{{cinemaId}}{{#if is3D}} is3D{{/if}}">{{time}}</span>&nbsp;
+    {{else}}
+    <span class="session no-session">Нет сеансов в указанное время</span>
+    {{/each}}
+</template>
