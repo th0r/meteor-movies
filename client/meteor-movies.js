@@ -48,11 +48,9 @@ Template.showings_list.showings = function () {
         .forEach(function (showing) {
             var sessions = movies[showing.movie] = movies[showing.movie] || [];
 
-            showing.sessions.forEach(function (time) {
-                sessions.push({
-                    time: time,
-                    cinemaId: showing.cinemaId
-                });
+            showing.sessions.forEach(function (session) {
+                session.cinemaId = showing.cinemaId;
+                sessions.push(session);
             });
         });
 
@@ -63,15 +61,8 @@ Template.showings_list.showings = function () {
             sessions: sessions
         });
     });
-    moviesArray.sort(function (movie1, movie2) {
-        if (movie1.movie < movie2.movie) {
-            return -1;
-        } else {
-            return 1;
-        }
-    });
-
-    return moviesArray;
+    
+    return _.sortBy(moviesArray, 'movie');
 };
 
 Template.showing_times.times = function () {

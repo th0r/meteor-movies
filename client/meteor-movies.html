@@ -1,5 +1,5 @@
 <head>
-    <title>Matrix cinema showings</title>
+    <title>Фильмы на сегодня</title>
 </head>
 
 <body>
@@ -16,19 +16,19 @@
 </body>
 
 <template name="showings_list">
-    <ul>
+    <ul class="showings-list">
     {{#each showings}}
-        <li>{{movie}} - {{>showing_times}}</li>
+        <li class="showing">{{movie}} - {{>showing_times}}</li>
     {{else}}
-        <li>No showings</li>
+        <li class="showing no-showing">Нет сеансов</li>
     {{/each}}
     </ul>
 </template>
 
 <template name="showing_times">
     {{#each times}}
-        <span class="cinema-{{cinemaId}}">{{time}}</span>&nbsp;
+        <span class="session cinema-{{cinemaId}}{{#if is3D}} is3D{{/if}}">{{time}}</span>&nbsp;
     {{else}}
-        <span style="color: red">Нет сеансов в указанное время</span>
+        <span class="session no-session">Нет сеансов в указанное время</span>
     {{/each}}
 </template>

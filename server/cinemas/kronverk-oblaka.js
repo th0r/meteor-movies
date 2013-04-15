@@ -14,7 +14,7 @@ CinemasManager.addCinema('kronverk-oblaka', {
                     // Расписание идет для всех кинотеатров. Нам нужно только для нашего.
                     if (session.cinema_id === 58) {
                         // Добавляем приставку 3D, если это 3D сеанс
-                        var movieName = movie.name + (session.type === '3D' ? ' 3D' : ''),
+                        var movieName = movie.name,
                             sessions = movies[movieName] = movies[movieName] || [],
                             time = session.time.split(':'),
                             hours = +time[0],
@@ -24,7 +24,10 @@ CinemasManager.addCinema('kronverk-oblaka', {
                                 minutes: +time[1]
                             }).toDate();
 
-                        sessions.push(sessionDate);
+                        sessions.push({
+                            time: sessionDate,
+                            is3D: (movie.type === '3D')
+                        });
                     }
                 });
             });
@@ -34,7 +37,7 @@ CinemasManager.addCinema('kronverk-oblaka', {
         _.each(movies, function (sessions, movie) {
             moviesArray.push({
                 movie: movie,
-                sessions: sessions.sort()
+                sessions: _.sortBy(sessions, 'time')
             });
         });
         
