@@ -11,6 +11,15 @@
     font-size: 75%;
     }
 
+.control-cinemas .cinema-button-icon {
+    font-size: 170%;
+    font-style: normal;
+    line-height: 1px;
+    margin-left: 4px;
+    position: relative;
+    top: 3px;
+    }
+
 .control-time .control-time-slider {
     font-size: 75%;
     margin-bottom: 3px;

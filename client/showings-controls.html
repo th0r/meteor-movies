@@ -2,12 +2,16 @@
 
     <div class="control control-cinemas">
         <div class="control-title">Кинотеатры:</div>
-        <div class="control-container">{{>cinemas_list}}</div>
+        <div class="control-container">
+            {{>cinemas_list}}
+        </div>
     </div>
 
     <div class="control control-time">
         <div class="control-title">Время:</div>
-        <div class="control-container">{{>time_slider}}</div>
+        <div class="control-container">
+            {{>time_slider}}
+        </div>
     </div>
 
     <div class="control control-actions">
@@ -29,7 +33,7 @@
 
 <template name="cinema">
     <input id="cinema-{{ id }}" class="cinema-button" type="checkbox"{{#if selected}} checked="checked"{{/if}}>
-        <label for="cinema-{{ id }}" class="cinema-{{ id }}" data-id="{{ id }}">{{ shortName }}</label>
+        <label for="cinema-{{ id }}" data-id="{{ id }}">{{ shortName }}<i class="cinema-button-icon cinema-{{ id }}">•</i></label>
     </input>
 </template>
         
@@ -37,5 +41,8 @@
     {{#constant}}
         <div class="control-time-slider"></div>
         <div class="control-time-text"></div>
+        <div class="control-time-auto-wrap">
+            <input class="control-time-auto" type="checkbox">
+        </div>
     {{/constant}}
 </template>
