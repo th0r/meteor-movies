@@ -57,13 +57,16 @@ Template.movie_name.rendered = function () {
                 var originalName = self.data.movie,
                     synonym = ui.draggable.data('movie');
 
-                console.log(1);
                 MovieSynonyms.insert({
                     from: synonym,
                     to: originalName
                 });
             }
         });
+};
+
+Template.movie_name.movieUrl = function () {
+    return 'http://www.kinopoisk.ru/index.php?first=yes&kp_query=' + encodeURIComponent(this.movie);
 };
 
 Template.showing_times.times = function () {
