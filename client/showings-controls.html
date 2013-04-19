@@ -5,6 +5,7 @@
             <li><a href="#filter"><span>Фильтрация</span></a></li>
             <li><a href="#settings"><span>Настройки</span></a></li>
         </ul>
+
         <div id="filter">
             <div class="control control-cinemas">
                 <div class="control-title">Кинотеатры:</div>
@@ -20,22 +21,26 @@
                 </div>
             </div>
         </div>
+
         <div id="settings">
             <div class="control control-settings">
-                <div class="control control-cinemas">
+                <div class="control control-synonyms">
                     <div class="control-title">Синонимы:</div>
                     <div class="control-container">
                         {{>movies_synonyms_list}}
                     </div>
                 </div>
-                
+            </div>
+
+            <div class="control">
                 <div class="control-container">
                     <span id="refreshShowings">Refresh!</span>
                 </div>
             </div>
         </div>
+
     </div>
-    
+
 </template>
 
 <template name="cinemas_list">
@@ -53,7 +58,7 @@
         <label for="cinema-{{ id }}" data-id="{{ id }}">{{ shortName }}<i class="cinema-button-icon cinema-{{ id }}">•</i></label>
     </input>
 </template>
-        
+
 <template name="time_slider">
     {{#constant}}
         <div class="control-time-slider"></div>
@@ -65,15 +70,25 @@
         </div>
     {{/constant}}
 </template>
-        
+
 <template name="movies_synonyms_list">
-    {{#each synonyms}}
-        {{>movie_synonym}}
+    {{#each movies}}
+        <div class="movies">
+            {{>movie_synonyms}}
+        </div>
     {{else}}
-        <div>Нет синонимов</div>
+        <div class="movies no-synonyms">Нет синонимов</div>
     {{/each}}
 </template>
-        
-<template name="movie_synonym">
-    <div>Из "{{from}}" в "{{to}}"&nbsp;<span class="remove">x</span></div>
+
+<template name="movie_synonyms">
+    <div class="movie-original">{{original}}</div>
+    <div class="movie-synonyms">
+        {{#each docs}}
+            <div class="movie-synonym">
+                <span class="name">{{from}}</span>
+                <span class="remove ui-state-default ui-corner-all"><span class="ui-icon ui-icon-close"></span></span>
+            </div>
+        {{/each}}
+    </div>
 </template>

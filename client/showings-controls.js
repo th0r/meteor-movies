@@ -11,7 +11,7 @@ Template.cinemas_list.preserve(['.cinemas']);
 
 Template.cinemas_list.created = function () {
     var self = this;
-    
+
     // Automatically refreshing buttonset widget
     this.buttonRefreshHandler = Deps.autorun(function () {
         Session.get('disabledCinemas');
@@ -74,29 +74,30 @@ function updateTimeRange(values, $timeText) {
     Session.set('showingsTo', +to);
 }
 
-/**
- * @param {Date|Number} [to=Date.now()]  Date or timestamp to get closest minute to.
- * @return {Number}  Closest time in minutes.
- */
-function getClosestMinute(to) {
-    to = moment(to);
-    
-    return Math.ceil((to.hours() * 60 + to.minutes()) / TIME_STEP_MINUTES) * TIME_STEP_MINUTES;
+function getClosestMinuteToNow() {
+    var to = moment(),
+        nowMinutes = to.hours() * 60 + to.minutes();
+
+    if (nowMinutes < DAY_START_MINUTES) {
+        nowMinutes += 24 * 60;
+    }
+
+    return Math.ceil(nowMinutes / TIME_STEP_MINUTES) * TIME_STEP_MINUTES;
 }
 
 function autoUpdateTime($slider) {
     if (Session.get('autoTime')) {
         var values = $slider.slider('values'),
-            startValue = getClosestMinute(),
+            startValue = getClosestMinuteToNow(),
             endValue = Math.min(DAY_END_MINUTES, Math.max(values[1], startValue));
-        
+
         $slider.slider('values', [startValue, endValue]);
     }
 }
 
 Template.time_slider.rendered = function () {
     var $slider = this.$slider;
-    
+
     if (!$slider) {
         var initialValues = [DAY_START_MINUTES, DAY_END_MINUTES],
             $timeText = $(this.find('.control-time-text')),
@@ -114,7 +115,7 @@ Template.time_slider.rendered = function () {
             },
             slide: function (event, ui) {
                 var handleIndex = $(ui.handle).data('uiSliderHandleIndex');
-                
+
                 if (handleIndex === 0) {
                     // If left handler was moved, resetting auto time
                     Session.set('autoTime', false);
@@ -127,7 +128,7 @@ Template.time_slider.rendered = function () {
 
         // Turning on auto time update
         Session.set('autoTime', true);
-        
+
         // Auto time checkbox update
         this.autoTimeUpdateHandler = Deps.autorun(function () {
             var autoTime = !!Session.get('autoTime');
@@ -160,11 +161,27 @@ Template.showings_controls.events = {
     }
 };
 
-Template.movies_synonyms_list.synonyms = function () {
-    return MovieSynonyms.find({});
+Template.movies_synonyms_list.movies = function () {
+    var movies = {},
+        moviesArray = [];
+
+    MovieSynonyms.find({}).fetch().forEach(function (doc) {
+        var synonyms = movies[doc.to] = movies[doc.to] || [];
+
+        synonyms.push(doc);
+    });
+
+    _.each(movies, function (docs, original) {
+        moviesArray.push({
+            original: original,
+            docs: docs
+        });
+    });
+
+    return moviesArray;
 };
 
-Template.movie_synonym.events = {
+Template.movie_synonyms.events = {
     'click .remove': function () {
         MovieSynonyms.remove(this._id);
     }
