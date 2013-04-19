@@ -53,6 +53,7 @@ Template.movie_name.rendered = function () {
             hoverClass: 'drop-allowed',
             addClasses: false,
             scope: 'movie-name',
+            tolerance: 'pointer',
             drop: function (event, ui) {
                 var originalName = self.data.movie,
                     synonym = ui.draggable.data('movie');

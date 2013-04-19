@@ -8,7 +8,7 @@ a.movie {
     border-bottom: 1px dotted;
     }
 
-.movie.drop-allowed {
+a.movie.drop-allowed {
     font-weight: bold;
     }
 
