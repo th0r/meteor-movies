@@ -1,3 +1,10 @@
+// ==================================== Showings controls ====================================
+
+Template.showings_controls.rendered = function () {
+    $(this.find('.control-tabs'))
+        .tabs();
+};
+
 // ==================================== Cinemas List ====================================
 
 Template.cinemas_list.preserve(['.cinemas']);
@@ -145,10 +152,20 @@ Template.time_slider.events = {
     }
 };
 
-// ==================================== Actions ====================================
+// ==================================== Settings ====================================
 
 Template.showings_controls.events = {
     'click #refreshShowings': function () {
         Meteor.call('refreshShowings');
+    }
+};
+
+Template.movies_synonyms_list.synonyms = function () {
+    return MovieSynonyms.find({});
+};
+
+Template.movie_synonym.events = {
+    'click .remove': function () {
+        MovieSynonyms.remove(this._id);
     }
 };

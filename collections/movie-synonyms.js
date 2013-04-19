@@ -7,6 +7,10 @@ MovieSynonyms.allow({
             from: doc.from,
             to: doc.to
         }, {limit: 1}).count();
+    },
+    
+    remove: function () {
+        return true;
     }
 
 });

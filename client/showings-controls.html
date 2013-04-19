@@ -1,24 +1,41 @@
 <template name="showings_controls">
 
-    <div class="control control-cinemas">
-        <div class="control-title">Кинотеатры:</div>
-        <div class="control-container">
-            {{>cinemas_list}}
-        </div>
-    </div>
+    <div class="control-tabs">
+        <ul>
+            <li><a href="#filter"><span>Фильтрация</span></a></li>
+            <li><a href="#settings"><span>Настройки</span></a></li>
+        </ul>
+        <div id="filter">
+            <div class="control control-cinemas">
+                <div class="control-title">Кинотеатры:</div>
+                <div class="control-container">
+                    {{>cinemas_list}}
+                </div>
+            </div>
 
-    <div class="control control-time">
-        <div class="control-title">Время:</div>
-        <div class="control-container">
-            {{>time_slider}}
+            <div class="control control-time">
+                <div class="control-title">Время:</div>
+                <div class="control-container">
+                    {{>time_slider}}
+                </div>
+            </div>
+        </div>
+        <div id="settings">
+            <div class="control control-settings">
+                <div class="control control-cinemas">
+                    <div class="control-title">Синонимы:</div>
+                    <div class="control-container">
+                        {{>movies_synonyms_list}}
+                    </div>
+                </div>
+                
+                <div class="control-container">
+                    <span id="refreshShowings">Refresh!</span>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div class="control control-actions">
-        <div class="control-container">
-            <span id="refreshShowings">Refresh!</span>
-        </div>
-    </div>
+    
 </template>
 
 <template name="cinemas_list">
@@ -47,4 +64,16 @@
             </input>
         </div>
     {{/constant}}
+</template>
+        
+<template name="movies_synonyms_list">
+    {{#each synonyms}}
+        {{>movie_synonym}}
+    {{else}}
+        <div>Нет синонимов</div>
+    {{/each}}
+</template>
+        
+<template name="movie_synonym">
+    <div>Из "{{from}}" в "{{to}}"&nbsp;<span class="remove">x</span></div>
 </template>
