@@ -34,6 +34,38 @@ Template.showings_list.showings = function () {
     return _.sortBy(moviesArray, 'movie');
 };
 
+Template.movie_name.rendered = function () {
+    var self = this,
+        $movie = $(this.find('.movie'));
+
+    $movie
+        .draggable({
+            addClasses: false,
+            axis: 'y',
+            containment: $movie.closest('.showings-list'),
+            cursor: 'move',
+            opacity: 0.5,
+            revert: 'invalid',
+            revertDuration: 300,
+            scope: 'movie-name'
+        })
+        .droppable({
+            hoverClass: 'drop-allowed',
+            addClasses: false,
+            scope: 'movie-name',
+            drop: function (event, ui) {
+                var originalName = self.data.movie,
+                    synonym = ui.draggable.data('movie');
+
+                console.log(1);
+                MovieSynonyms.insert({
+                    from: synonym,
+                    to: originalName
+                });
+            }
+        });
+};
+
 Template.showing_times.times = function () {
     var from = Session.get('showingsFrom') || Number.NEGATIVE_INFINITY,
         to = Session.get('showingsTo') || Number.POSITIVE_INFINITY;

@@ -22,19 +22,3 @@ html, body {
 
 .controls {
     }
-
-.showing {
-    line-height: 1.4em;
-    }
-
-.session.no-session {
-    color: #dddddd;
-    }
-
-.session.is3D:after {
-    content: '3D';
-    position: relative;
-    font-size: 12px;
-    top: -7px;
-    left: 1px;
-    }
