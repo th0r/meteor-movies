@@ -26,6 +26,11 @@
     }
 
 .control-time .control-time-text {
+    margin-bottom: 2px;
+    text-align: center;
+    }
+
+.control-time .control-time-auto-wrap {
     text-align: center;
     }
 

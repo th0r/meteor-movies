@@ -56,7 +56,7 @@ Template.cinemas_list.cinemas = function () {
 var TIME_STEP_MINUTES = 30,
     DAY_START_MINUTES = 9 * 60,
     DAY_END_MINUTES = (24 + 3) * 60,
-    SLIDER_AUTOUPDATE_INTERVAL_MIN = /*Math.max(1, TIME_STEP_MINUTES / 10)*/ 0.1;
+    SLIDER_AUTOUPDATE_INTERVAL_MINUTES = 1;
 
 function updateTimeRange(values, $timeText) {
     var from = moment().hours(0).seconds(0).minutes(values[0]),
@@ -77,23 +77,25 @@ function getClosestMinute(to) {
     return Math.ceil((to.hours() * 60 + to.minutes()) / TIME_STEP_MINUTES) * TIME_STEP_MINUTES;
 }
 
-Template.time_slider.created = function () {
-    var self = this;
-    
-    this.sliderUpdateInterval = Meteor.setInterval(function () {
-        // TODO: сделать чекбокс, юзать ли текущее время или нет
-        if (self.useCurrentTime && self.$slider) {
-            self.$slider.slider('values', 0, getClosestMinute());
-        }
-    }, SLIDER_AUTOUPDATE_INTERVAL_MIN * 60 * 1000);
-};
+function autoUpdateTime($slider) {
+    if (Session.get('autoTime')) {
+        var values = $slider.slider('values'),
+            startValue = getClosestMinute(),
+            endValue = Math.min(DAY_END_MINUTES, Math.max(values[1], startValue));
+        
+        $slider.slider('values', [startValue, endValue]);
+    }
+}
 
 Template.time_slider.rendered = function () {
-    if (!this.$slider) {
-        var initialValues = [getClosestMinute(), DAY_END_MINUTES],
-            $timeText = $(this.find('.control-time-text'));
+    var $slider = this.$slider;
+    
+    if (!$slider) {
+        var initialValues = [DAY_START_MINUTES, DAY_END_MINUTES],
+            $timeText = $(this.find('.control-time-text')),
+            autoTimeCheckbox = this.find('.control-time-auto');
 
-        this.$slider = $(this.find('.control-time-slider')).slider({
+        $slider = this.$slider = $(this.find('.control-time-slider')).slider({
             range: true,
             min: DAY_START_MINUTES,
             max: DAY_END_MINUTES,
@@ -104,17 +106,43 @@ Template.time_slider.rendered = function () {
                 updateTimeRange(ui.values, $timeText);
             },
             slide: function (event, ui) {
+                var handleIndex = $(ui.handle).data('uiSliderHandleIndex');
+                
+                if (handleIndex === 0) {
+                    // If left handler was moved, resetting auto time
+                    Session.set('autoTime', false);
+                }
                 updateTimeRange(ui.values, $timeText);
             }
         });
 
         updateTimeRange(initialValues, $timeText);
+
+        // Turning on auto time update
+        Session.set('autoTime', true);
+        
+        // Auto time checkbox update
+        this.autoTimeUpdateHandler = Deps.autorun(function () {
+            var autoTime = !!Session.get('autoTime');
+
+            autoTimeCheckbox.checked = !!Session.get('autoTime');
+            autoUpdateTime($slider);
+        });
+
+        this.sliderUpdateInterval = Meteor.setInterval(autoUpdateTime.bind(null, $slider), SLIDER_AUTOUPDATE_INTERVAL_MINUTES * 60 * 1000);
     }
 };
 
 Template.time_slider.destroyed = function () {
     Meteor.clearInterval(this.sliderUpdateInterval);
+    this.autoTimeUpdateHandler.stop();
     this.$slider.slider('destroy');
+};
+
+Template.time_slider.events = {
+    'change .control-time-auto': function (event) {
+        Session.set('autoTime', event.currentTarget.checked);
+    }
 };
 
 // ==================================== Actions ====================================
