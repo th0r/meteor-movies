@@ -66,6 +66,12 @@ Template.movie_name.rendered = function () {
         });
 };
 
+Template.movie_name.movieInfo = function () {
+    var movie = Movies.findOne({title: this.movie});
+    
+    return movie ? movie.info || null : null;
+};
+
 Template.movie_name.movieUrl = function () {
     return 'http://www.kinopoisk.ru/index.php?first=yes&kp_query=' + encodeURIComponent(this.movie);
 };

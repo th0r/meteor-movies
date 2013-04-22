@@ -33,6 +33,7 @@ Meteor.startup(function () {
                             }
                             showing.cinemaId = cinemaId;
                             Showings.insert(showing);
+                            MoviesManager.addMovie(showing.movie);
                         });
                     }).run();
                 }

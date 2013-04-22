@@ -11,7 +11,7 @@
 </template>
         
 <template name="movie_name">
-    <a class="movie" data-movie="{{movie}}" href="{{movieUrl}}" target="_blank">{{movie}}</a>
+    <a class="movie" data-movie="{{movie}}" href="{{movieUrl}}" target="_blank">{{movie}}{{#if movieInfo}} - {{movieInfo.rating.kinopoisk}}{{/if}}</a>
 </template>
 
 <template name="showing_times">
