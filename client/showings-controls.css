@@ -33,36 +33,54 @@
     text-align: center;
     }
 
-.control-synonyms .movie-original {
-    float: left;
-    width: 50%;
-    padding: 2px 0 3px;
-    min-height: 1.8em;
+.control-synonyms .movies {
+    border-bottom: 1px dotted #CCCCCC;
+    display: table;
+    margin-bottom: 7px;
+    padding-bottom: 7px;
+    width: 100%;
+    padding-bottom: 7px;
+    margin-bottom: 7px;
     }
 
-.control-synonyms .movie-synonyms {
-    float: left;
-    width: 50%;
-    }
-
-.control-synonyms .movie-synonym {
-    border-bottom: 1px dotted #CCC;
-    min-height: 1.8em;
-    padding: 2px 24px 3px 0;
-    position: relative;
-    }
-
-.control-synonyms .movie-synonym:only-child {
+.control-synonyms .movies:only-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
     border-bottom: none;
     }
 
+.control-synonyms .movie-original {
+    display: table-cell;
+    width: 50%;
+    vertical-align: middle;
+    padding: 4px 10px 4px 0;
+    }
+
+.control-synonyms .movie-synonyms {
+    display: table;
+    width: 100%;
+    }
+
+.control-synonyms .movie-synonym {
+    display: table-row;
+    }
+
+.control-synonyms .name {
+    display: table-cell;
+    padding: 4px 5px 4px 0;
+    vertical-align: middle;
+    }
+
 .control-synonyms .remove {
+    display: table-cell;
+    padding: 4px 0;
+    text-align: right;
+    vertical-align: middle;
+    }
+
+.control-synonyms .remove-button {
     display: inline-block;
     height: 17px;
-    margin-top: -13px;
-    position: absolute;
-    right: 0;
-    top: 50%;
     width: 17px;
     cursor: pointer;
     }
