@@ -12,6 +12,18 @@ a.movie.drop-allowed {
     font-weight: bold;
     }
 
+.movie-info-content {
+    display: none;
+    }
+
+.movie-info-icon {
+    display: inline-block;
+    margin-left: 2px;
+    position: relative;
+    top: 3px;
+    cursor: pointer;
+    }
+
 .session.no-session {
     color: #dddddd;
     }

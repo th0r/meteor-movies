@@ -11,8 +11,25 @@
 </template>
         
 <template name="movie_name">
-    <a class="movie" data-movie="{{movie}}" href="{{movieUrl}}" target="_blank">{{movie}}{{#if movieInfo}} - {{movieInfo.rating.kinopoisk}}{{/if}}</a>
+    <a class="movie" data-movie="{{movie}}" href="{{movieUrl}}" target="_blank">{{movie}}</a>{{>movie_info}}
 </template>
+        
+<template name="movie_info">
+    {{#if movie}}<span class="movie-info-icon ui-icon ui-icon-info"></span>{{#with movie}}{{>movie_info_content}}{{/with}}{{/if}}
+</template>
+
+<template name="movie_info_content">
+    <div class="movie-info-content">
+        <div>{{title}}</div>
+        {{#with info}}
+        <div>{{description}}</div>
+        <div>{{rating.kinopoisk}}/{{rating.imdb}}</div>
+        <img src="{{poster}}"/>
+        {{/with}}
+    </div>
+</template>
+        
+
 
 <template name="showing_times">
     <span class="sessions">
