@@ -26,10 +26,15 @@ a.movie.drop-allowed {
     margin-left: 162px;
     }
 
+.movie-info .poster-link {
+    outline: 0;
+    }
+
 .movie-info .poster {
     display: block;
     margin-bottom: 7px;
     width: 150px;
+    box-shadow: 0 0 7px rgba(0, 0, 0, 0.65);
     }
 
 .movie-info .rating {

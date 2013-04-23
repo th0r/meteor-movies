@@ -81,7 +81,9 @@ Template.movie_name.rendered = function () {
 };
 
 Template.movie_name.movieUrl = function () {
-    return 'http://www.kinopoisk.ru/index.php?first=yes&kp_query=' + encodeURIComponent(this.movie);
+    var movie = Movies.findOne({title: this.movie});
+
+    return movie && movie.info ? movie.info.url : 'http://www.kinopoisk.ru/index.php?first=yes&kp_query=' + encodeURIComponent(this.movie);
 };
 
 Template.movie_info.movie = function () {

@@ -26,7 +26,7 @@
     <div class="movie-info" title="{{title}}">
         {{#with info}}
         <div class="col-left">
-            <img class="poster" src="{{poster}}"/>
+            <a class="poster-link" href="{{url}}" target="_blank"><img class="poster" src="{{poster}}"/></a>
             <div class="rating">{{>movie_rating}}</div>
         </div>
         <div class="col-right">

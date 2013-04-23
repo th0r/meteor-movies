@@ -68,12 +68,14 @@ MoviesManager = {
                 encoding: 'binary'
             }, function (err, res, body) {
                 var converter,
-                    html;
+                    html,
+                    movieUrl;
 
                 if (err || res.statusCode !== 200) {
                     err = err || 'response with code ' + response.statusCode + ' returned';
                     console.log('Error getting info for movie "' + title + '": ', err);
                 } else {
+                    movieUrl = res.request.uri.href;
                     // Converting response to utf8
                     converter = new iconv.Iconv('CP1251', 'UTF8//TRANSLIT//IGNORE');
                     html = converter.convert(new Buffer(body, 'binary')).toString();
@@ -85,7 +87,7 @@ MoviesManager = {
                                 console.log('Error while converting movie page HTML into DOM:', errors);
                             } else {
                                 try {
-                                    self._parseMovieInfo(window.document, title, docId);
+                                    self._parseMovieInfo(window.document, title, docId, movieUrl);
                                 } catch(e) {
                                     console.log('Error while parsing info for movie "' + title + '"', e);
                                 }
@@ -97,7 +99,7 @@ MoviesManager = {
         
     },
     
-    _parseMovieInfo: function (doc, title, docId) {
+    _parseMovieInfo: function (doc, title, docId, movieUrl) {
         var posterElem = doc.querySelector('.popupBigImage img'),
             descriptionElem = doc.querySelector('.brand_words'),
             description,
@@ -110,8 +112,9 @@ MoviesManager = {
                 return SAFE_TAGS.hasOwnProperty(tagName.toLowerCase()) ? match : '';
             });
         }
-        
+
         var info = {
+            url: movieUrl,
             poster: posterElem && posterElem.src ? POSTER_PROXY_PREFIX + posterElem.src : null,
             description: description || null,
             rating: {
