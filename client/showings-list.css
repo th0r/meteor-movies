@@ -12,8 +12,40 @@ a.movie.drop-allowed {
     font-weight: bold;
     }
 
-.movie-info-content {
+.movie-info {
     display: none;
+    }
+
+.movie-info .col-left {
+    margin-right: -150px;
+    width: 150px;
+    float: left;
+    }
+
+.movie-info .col-right {
+    margin-left: 162px;
+    }
+
+.movie-info .poster {
+    display: block;
+    margin-bottom: 7px;
+    width: 150px;
+    }
+
+.movie-info .rating {
+    margin-bottom: 3px;
+    }
+
+.rating-group-1 {
+    color: #080;
+    }
+
+.rating-group-2 {
+    color: #FF8C00;
+    }
+
+.rating-group-3 {
+    color: #F00;
     }
 
 .movie-info-icon {

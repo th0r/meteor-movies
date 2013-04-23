@@ -23,13 +23,23 @@
 </template>
 
 <template name="movie_info_content">
-    <div class="movie-info-content" title="{{title}}">
+    <div class="movie-info" title="{{title}}">
         {{#with info}}
-            <div>{{description}}</div>
-            <div>{{rating.kinopoisk}}/{{rating.imdb}}</div>
-            <img src="{{poster}}"/>
+        <div class="col-left">
+            <img class="poster" src="{{poster}}"/>
+            <div class="rating">{{>movie_rating}}</div>
+        </div>
+        <div class="col-right">
+            <div class="description">{{description}}</div>
+        </div>
         {{/with}}
     </div>
+</template>
+
+<template name="movie_rating">
+    {{#each ratings}}
+    <div>{{name}}: <span class="rating-group-{{ratingGroup}}">{{rating}}</span></div>
+    {{/each}}
 </template>
 
 <template name="showing_times">

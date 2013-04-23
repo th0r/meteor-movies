@@ -1,3 +1,17 @@
+var RATING_SITES_MAP = {
+        'kinopoisk': 'Кинопоиск',
+        'imdb': 'IMDB'
+    },
+    RATING_GROUPS = [7, 5, 0];
+
+function getRatingGroup(rating) {
+    var i = 0;
+    
+    while (rating < RATING_GROUPS[i++]) {}
+    
+    return i;
+}
+
 Template.showings_list.showings = function () {
     var movies = {},
         moviesArray = [],
@@ -66,10 +80,28 @@ Template.movie_name.rendered = function () {
         });
 };
 
+Template.movie_name.movieUrl = function () {
+    return 'http://www.kinopoisk.ru/index.php?first=yes&kp_query=' + encodeURIComponent(this.movie);
+};
+
 Template.movie_info.movie = function () {
     var movie = Movies.findOne({title: this.movie});
     
     return movie && movie.info ? movie : null;
+};
+
+Template.movie_rating.ratings = function () {
+    var ratings = [];
+    
+    _.each(this.rating, function (rating, sideId) {
+        ratings.push({
+            name: RATING_SITES_MAP[sideId],
+            rating: rating,
+            ratingGroup: getRatingGroup(rating)
+        })
+    });
+    
+    return ratings;
 };
 
 Template.movie_info.events = {
@@ -79,7 +111,7 @@ Template.movie_info.events = {
         
         if (!$dialog) {
             var iconNode = event.target,
-                $dialogContent = $(iconNode).find('.movie-info-content');
+                $dialogContent = $(iconNode).find('.movie-info');
 
             $dialog = tmpl.$dialog = $dialogContent
                 .dialog({
@@ -88,7 +120,9 @@ Template.movie_info.events = {
                         my: 'left center',
                         at: 'right center',
                         of: iconNode
-                    }
+                    },
+                    minWidth: 350,
+                    width: 550
                 });
         }
         
@@ -99,10 +133,6 @@ Template.movie_info.events = {
         }
     }
     
-};
-
-Template.movie_name.movieUrl = function () {
-    return 'http://www.kinopoisk.ru/index.php?first=yes&kp_query=' + encodeURIComponent(this.movie);
 };
 
 Template.showing_times.times = function () {
