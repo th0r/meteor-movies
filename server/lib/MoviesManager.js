@@ -1,4 +1,9 @@
 var IMDB_RATING_REGEXP = /\s(\d\.\d\d)\s/,
+    HTML_TAGS = /<\/?\s*(.*?)\s*\/?>/ig,
+    SAFE_TAGS = {
+        'br': 1,
+        'p': 1
+    },
     POSTER_PROXY_PREFIX = '/poster/',
     Fiber = Npm.require('fibers'),
     request = Npm.require('request'),
@@ -95,13 +100,20 @@ MoviesManager = {
     _parseMovieInfo: function (doc, title, docId) {
         var posterElem = doc.querySelector('.popupBigImage img'),
             descriptionElem = doc.querySelector('.brand_words'),
+            description,
             ratingKinopoiskElem = doc.querySelector('.rating_ball'),
             ratingImdbElem = doc.querySelector('#block_rating .block_2 .div1 + div'),
             ratingImdb = ratingImdbElem ? IMDB_RATING_REGEXP.exec(ratingImdbElem.textContent) : null;
         
+        if (descriptionElem) {
+            description = descriptionElem.innerHTML.replace(HTML_TAGS, function (match, tagName) {
+                return SAFE_TAGS.hasOwnProperty(tagName.toLowerCase()) ? match : '';
+            });
+        }
+        
         var info = {
             poster: posterElem && posterElem.src ? POSTER_PROXY_PREFIX + posterElem.src : null,
-            description: descriptionElem ? descriptionElem.textContent : null,
+            description: description || null,
             rating: {
                 kinopoisk: ratingKinopoiskElem ? parseFloat(ratingKinopoiskElem.textContent) || null : null,
                 imdb: ratingImdbElem ? parseFloat(ratingImdb[1]) || null : null
