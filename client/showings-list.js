@@ -34,19 +34,6 @@ Template.showings_list.showings = function () {
     return _.sortBy(moviesArray, 'movie');
 };
 
-Template.showings_list.rendered = function () {
-    if (this.$tooltips) {
-        this.$tooltips.tooltip('destroy');
-    }
-    
-    this.$tooltips = $(this.firstNode).tooltip({
-        items: '.movie-info-icon',
-        content: function () {
-            return $(this).nextAll('.movie-info-content').html();
-        }
-    });
-};
-
 Template.movie_name.rendered = function () {
     var self = this,
         $movie = $(this.find('.movie'));
@@ -83,6 +70,35 @@ Template.movie_info.movie = function () {
     var movie = Movies.findOne({title: this.movie});
     
     return movie && movie.info ? movie : null;
+};
+
+Template.movie_info.events = {
+    
+    'click .movie-info-icon': function (event, tmpl) {
+        var $dialog = tmpl.$dialog;
+        
+        if (!$dialog) {
+            var iconNode = event.target,
+                $dialogContent = $(iconNode).find('.movie-info-content');
+
+            $dialog = tmpl.$dialog = $dialogContent
+                .dialog({
+                    autoOpen: false,
+                    position: {
+                        my: 'left center',
+                        at: 'right center',
+                        of: iconNode
+                    }
+                });
+        }
+        
+        if ($dialog.dialog('isOpen')) {
+            $dialog.dialog('close');
+        } else {
+            $dialog.dialog('open');
+        }
+    }
+    
 };
 
 Template.movie_name.movieUrl = function () {

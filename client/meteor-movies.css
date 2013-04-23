@@ -22,3 +22,7 @@ html, body {
 
 .controls {
     }
+
+.ui-widget {
+    font-size: 80%;
+    }

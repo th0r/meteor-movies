@@ -15,21 +15,22 @@
 </template>
         
 <template name="movie_info">
-    {{#if movie}}<span class="movie-info-icon ui-icon ui-icon-info"></span>{{#with movie}}{{>movie_info_content}}{{/with}}{{/if}}
+    {{#if movie}}
+        <div class="movie-info-icon ui-icon ui-icon-info">
+            {{#with movie}}{{>movie_info_content}}{{/with}}
+        </div>
+    {{/if}}
 </template>
 
 <template name="movie_info_content">
-    <div class="movie-info-content">
-        <div>{{title}}</div>
+    <div class="movie-info-content" title="{{title}}">
         {{#with info}}
-        <div>{{description}}</div>
-        <div>{{rating.kinopoisk}}/{{rating.imdb}}</div>
-        <img src="{{poster}}"/>
+            <div>{{description}}</div>
+            <div>{{rating.kinopoisk}}/{{rating.imdb}}</div>
+            <img src="{{poster}}"/>
         {{/with}}
     </div>
 </template>
-        
-
 
 <template name="showing_times">
     <span class="sessions">
