@@ -23,6 +23,13 @@ html, body {
 .controls {
     }
 
+
+/* jQuery UI Override */
+
 .ui-widget {
     font-size: 80%;
+    }
+
+.ui-dialog .ui-dialog-content {
+    padding: 15px 15px 12px 15px;
     }

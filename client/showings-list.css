@@ -37,10 +37,6 @@ a.movie.drop-allowed {
     box-shadow: 0 0 7px rgba(0, 0, 0, 0.65);
     }
 
-.movie-info .rating {
-    margin-bottom: 3px;
-    }
-
 .rating-group-1 {
     color: #080;
     }
