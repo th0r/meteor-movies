@@ -6,6 +6,10 @@ var RATING_SITES_MAP = {
 
 function getRatingGroup(rating) {
     var i = 0;
+
+    if (!rating) {
+        return 'unrated';
+    }
     
     while (rating < RATING_GROUPS[i++]) {}
     
@@ -98,7 +102,7 @@ Template.movie_rating.ratings = function () {
     _.each(this.rating, function (rating, sideId) {
         ratings.push({
             name: RATING_SITES_MAP[sideId],
-            rating: rating,
+            rating: rating || '-',
             ratingGroup: getRatingGroup(rating)
         })
     });
