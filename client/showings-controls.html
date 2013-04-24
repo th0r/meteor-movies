@@ -54,7 +54,7 @@
 </template>
 
 <template name="cinema">
-    <input id="cinema-{{ id }}" class="cinema-button" type="checkbox"{{#if selected}} checked="checked"{{/if}}>
+    <input id="cinema-{{ id }}" class="cinema-button" type="checkbox"{{#if selected}} checked{{/if}}{{#if disabled}} disabled{{/if}}>
         <label for="cinema-{{ id }}" data-id="{{ id }}">{{ shortName }}<i class="cinema-button-icon cinema-{{ id }}">•</i></label>
     </input>
 </template>

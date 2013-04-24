@@ -52,7 +52,8 @@ Template.cinemas_list.cinemas = function () {
     disabledCinemas = Session.get('disabledCinemas');
 
     cinemas.forEach(function (cinema) {
-        cinema.selected = !disabledCinemas[cinema.id];
+        cinema.disabled = !Showings.findOne({cinemaId: cinema.id});
+        cinema.selected = !cinema.disabled && !disabledCinemas[cinema.id];
     });
 
     return cinemas;
