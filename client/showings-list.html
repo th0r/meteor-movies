@@ -1,13 +1,16 @@
 <template name="showings_list">
-    <ul class="showings-list">
+    <table class="showings-list">
         {{#each showings}}
-        <li class="showing">
-            {{>movie_name}} - {{>showing_times}}
-        </li>
+        <tr>
+            <td class="showing">{{>movie_name}}</td>
+            <td class="showing-sessions">{{>showing_times}}</td>
+        </tr>
         {{else}}
-        <li class="showing no-showing">Нет сеансов</li>
+        <tr>
+            <td class="showing no-showing">Нет сеансов</td>
+        </tr>
         {{/each}}
-    </ul>
+    </table>
 </template>
         
 <template name="movie_name">

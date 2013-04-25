@@ -1,6 +1,10 @@
-.showing {
-    line-height: 1.4em;
+.showings-list {
+    border-spacing: 20px 10px;
     }
+
+.showing {
+    white-space: nowrap;
+    } 
 
 a.movie {
     color: #2779AA;
