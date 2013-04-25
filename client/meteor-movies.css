@@ -5,12 +5,12 @@ html, body {
 
 .left-column {
     float: left;
-    width: 60%;
+    width: 70%;
     }
 
 .right-column {
     float: left;
-    width: 40%;
+    width: 30%;
     }
 
 .showings, .controls {

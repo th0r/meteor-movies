@@ -2,6 +2,10 @@
     border-spacing: 20px 10px;
     }
 
+.showings-list .rating {
+    text-align: center;
+    }
+
 .showing {
     white-space: nowrap;
     } 

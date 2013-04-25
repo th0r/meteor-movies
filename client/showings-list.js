@@ -2,6 +2,7 @@ var RATING_SITES_MAP = {
         'kinopoisk': 'Кинопоиск',
         'imdb': 'IMDB'
     },
+    RATINGS_HEADERS = ['kinopoisk', 'imdb'],
     RATING_GROUPS = [7, 5, 0];
 
 function getRatingGroup(rating) {
@@ -16,10 +17,79 @@ function getRatingGroup(rating) {
     return i;
 }
 
+function formRatingArray(ratingObj) {
+    return RATINGS_HEADERS.map(function (ratingId) {
+        var rating = ratingObj ? ratingObj[ratingId] : null;
+        
+        return {
+            name: RATING_SITES_MAP[ratingId],
+            rating: rating,
+            ratingGroup: getRatingGroup(rating)
+        }
+    });
+}
+
+Template.sort_icon.sortInfo = function () {
+    if (this.sortId) {
+        var sorting = Session.get('sorting');
+        
+        return sorting.by === this.sortId ? sorting : null;
+    } else {
+        return null;
+    }
+};
+
+Template.showings_list.headers = function () {
+    var headers = [
+            {
+                name: 'Название',
+                sortId: 'movie-name'
+            },
+            {
+                name: 'Сеансы'
+            }
+        ],
+        withRatingHeaders = Template.showings_list.withRatingHeaders();
+
+    if (withRatingHeaders) {
+        // Making rating headers
+        var i = 1;
+        RATINGS_HEADERS.forEach(function (ratingId) {
+            headers.splice(i++, 0, {
+                name: 'Рейтинг (' + RATING_SITES_MAP[ratingId] + ')',
+                sortId: 'rating-' + ratingId,
+                defaultSortOrder: -1
+            });
+        });
+    }
+
+    return headers;
+};
+
+Template.showings_list.events = {
+    'click .showing-list-header': function () {
+        var sorting = Session.get('sorting');
+
+        if (sorting.by === this.sortId) {
+            sorting.order *= -1;
+        } else {
+            sorting.by = this.sortId;
+            sorting.order = this.defaultSortOrder || 1;
+        }
+
+        Session.set('sorting', sorting);
+    }
+};
+
+Template.showings_list.withRatingHeaders = function () {
+    return !!Movies.findOne({'info.rating': {$exists: true}});
+};
+
 Template.showings_list.showings = function () {
     var movies = {},
         moviesArray = [],
-        disabledCinemas = [];
+        disabledCinemas = [],
+        sorting = Session.get('sorting');
 
     _.each(Session.get('disabledCinemas') || {}, function (disabled, cinemaId) {
         if (disabled) {
@@ -42,14 +112,32 @@ Template.showings_list.showings = function () {
         });
 
     // Converting movies to array, sorted by movie name
-    _.each(movies, function (sessions, movie) {
+    _.each(movies, function (sessions, movieName) {
+        var movie = Movies.findOne({title: movieName, 'info.rating': {$exists: true}});
+        
         moviesArray.push({
-            movie: movie,
-            sessions: sessions
+            movie: movieName,
+            sessions: sessions,
+            rating: formRatingArray(movie && movie.info.rating)
         });
     });
+    
+    // Sorting list
+    if (sorting.by === 'movie-name') {
+        moviesArray = _.sortBy(moviesArray, 'movie');
+    } else if (/^rating-(\w+)/.test(sorting.by)) {
+        var ratingId = RegExp.$1;
+        
+        moviesArray = _.sortBy(moviesArray, function (movie) {
+            return movie.rating[RATINGS_HEADERS.indexOf(ratingId)].rating;
+        });
+    }
+    
+    if (sorting.order === -1) {
+        moviesArray = moviesArray.reverse();
+    }
 
-    return _.sortBy(moviesArray, 'movie');
+    return moviesArray;
 };
 
 Template.movie_name.rendered = function () {
@@ -97,17 +185,7 @@ Template.movie_info.movie = function () {
 };
 
 Template.movie_rating.ratings = function () {
-    var ratings = [];
-    
-    _.each(this.rating, function (rating, sideId) {
-        ratings.push({
-            name: RATING_SITES_MAP[sideId],
-            rating: rating || '-',
-            ratingGroup: getRatingGroup(rating)
-        })
-    });
-    
-    return ratings;
+    return formRatingArray(this.rating);
 };
 
 Template.movie_info.events = {

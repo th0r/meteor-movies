@@ -1,8 +1,12 @@
 Meteor.startup(function () {
 
     var SESSION_DEFAULTS = {
-        'autoTime': true,
-        'disabledCinemas': {}
+        sorting: {
+            by: 'movie-name',
+            order: 1
+        },
+        autoTime: true,
+        disabledCinemas: {}
     };
 
     // Setting default session values

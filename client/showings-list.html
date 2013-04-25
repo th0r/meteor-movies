@@ -1,16 +1,32 @@
 <template name="showings_list">
-    <table class="showings-list">
-        {{#each showings}}
-        <tr>
-            <td class="showing">{{>movie_name}}</td>
-            <td class="showing-sessions">{{>showing_times}}</td>
-        </tr>
-        {{else}}
-        <tr>
-            <td class="showing no-showing">Нет сеансов</td>
-        </tr>
-        {{/each}}
-    </table>
+    {{#if showings}}
+        <table class="showings-list">
+            <tr>
+                {{#each headers}}
+                    <th class="showing-list-header">{{name}}{{>sort_icon}}</th>
+                {{/each}}
+            </tr>
+            {{#each showings}}
+                <tr>
+                    <td class="showing">{{>movie_name}}</td>
+                    {{#if withRatingHeaders}}
+                        {{#each rating}}
+                            <td class="rating">{{>movie_rating_value}}</td>
+                        {{/each}}
+                    {{/if}}
+                    <td class="showing-sessions">{{>showing_times}}</td>
+                </tr>
+            {{/each}}
+        </table>
+    {{else}}
+        <div class="showing no-showing">Нет сеансов</div>
+    {{/if}}
+</template>
+
+<template name="sort_icon">
+    {{#with sortInfo}}
+        <span class="sort-icon">{{#if equal order 1}}asc{{else}}desc{{/if}}</span>
+    {{/with}}
 </template>
         
 <template name="movie_name">
@@ -41,8 +57,12 @@
 
 <template name="movie_rating">
     {{#each ratings}}
-    <div>{{name}}: <span class="rating-group-{{ratingGroup}}">{{rating}}</span></div>
+    <div>{{name}}: {{>movie_rating_value}}</div>
     {{/each}}
+</template>
+
+<template name="movie_rating_value">
+    <span class="rating-group-{{ratingGroup}}">{{#if rating}}{{rating}}{{else}}-{{/if}}</span>
 </template>
 
 <template name="showing_times">
