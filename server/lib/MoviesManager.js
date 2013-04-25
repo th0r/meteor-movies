@@ -119,7 +119,7 @@ MoviesManager = {
             description: description || null,
             rating: {
                 kinopoisk: ratingKinopoiskElem ? parseFloat(ratingKinopoiskElem.textContent) || null : null,
-                imdb: ratingImdbElem ? parseFloat(ratingImdb[1]) || null : null
+                imdb: ratingImdb ? parseFloat(ratingImdb[1]) || null : null
             }
         };
 
