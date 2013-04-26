@@ -21,6 +21,7 @@ html, body {
     }
 
 .controls {
+    min-width: 350px;
     }
 
 
