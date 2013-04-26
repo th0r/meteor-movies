@@ -118,25 +118,25 @@ Template.showings_list.showings = function () {
     // Converting movies to array, sorted by movie name
     _.each(movies, function (sessions, movieName) {
         var movie = Movies.findOne({title: movieName, 'info.rating': {$exists: true}});
-        
+
         moviesArray.push({
             movie: movieName,
             sessions: sessions,
             rating: formRatingArray(movie && movie.info.rating)
         });
     });
-    
+
     // Sorting list
     if (sorting.by === 'movie-name') {
         moviesArray = _.sortBy(moviesArray, 'movie');
     } else if (/^rating-(\w+)/.test(sorting.by)) {
         var ratingId = RegExp.$1;
-        
+
         moviesArray = _.sortBy(moviesArray, function (movie) {
             return movie.rating[RATINGS_HEADERS.indexOf(ratingId)].rating;
         });
     }
-    
+
     if (sorting.order === -1) {
         moviesArray = moviesArray.reverse();
     }

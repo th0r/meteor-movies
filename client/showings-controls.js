@@ -66,7 +66,7 @@ var TIME_STEP_MINUTES = 30,
     SLIDER_AUTOUPDATE_INTERVAL_MINUTES = 1;
 
 function convertMinuteToMoment(minutes) {
-    return moment().hours(0).seconds(0).minutes(minutes);
+    return moment().startOf('day').minutes(minutes);
 }
 
 function updateTimeRange(values, $timeText) {
