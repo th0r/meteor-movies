@@ -1,11 +1,11 @@
 Package.describe({
-    summary: 'Text recoding in JavaScript for fun and profit!'
+    summary: 'Convert character encodings in pure javascript.'
 });
 
 Npm.depends({
-    'iconv': '2.0.5'
+    'iconv-lite': '0.2.8'
 });
 
 Package.on_use(function (api) {
-    api.add_files('iconv.js', 'server');
+    api.add_files('iconv-lite.js', 'server');
 });

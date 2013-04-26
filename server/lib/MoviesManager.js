@@ -67,8 +67,7 @@ MoviesManager = {
                 },
                 encoding: 'binary'
             }, function (err, res, body) {
-                var converter,
-                    html,
+                var html,
                     movieUrl;
 
                 if (err || res.statusCode !== 200) {
@@ -77,8 +76,7 @@ MoviesManager = {
                 } else {
                     movieUrl = res.request.uri.href;
                     // Converting response to utf8
-                    converter = new iconv.Iconv('CP1251', 'UTF8//TRANSLIT//IGNORE');
-                    html = converter.convert(new Buffer(body, 'binary')).toString();
+                    html = iconv.decode(new Buffer(body, 'binary'), 'win1251');
 
                     jsdom.env(
                         html,
