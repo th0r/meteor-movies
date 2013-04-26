@@ -56,7 +56,7 @@ Template.showings_list.headers = function () {
         var i = 1;
         RATINGS_HEADERS.forEach(function (ratingId) {
             headers.splice(i++, 0, {
-                name: 'Рейтинг (' + RATING_SITES_MAP[ratingId] + ')',
+                name: RATING_SITES_MAP[ratingId],
                 sortId: 'rating-' + ratingId,
                 defaultSortOrder: -1
             });
@@ -67,7 +67,7 @@ Template.showings_list.headers = function () {
 };
 
 Template.showings_list.events = {
-    'click .showing-list-header': function () {
+    'click .showing-list-header.sortable': function () {
         var sorting = Session.get('sorting');
 
         if (sorting.by === this.sortId) {
@@ -83,6 +83,10 @@ Template.showings_list.events = {
 
 Template.showings_list.withRatingHeaders = function () {
     return !!Movies.findOne({'info.rating': {$exists: true}});
+};
+
+Template.showings_list.hasShowings = function () {
+    return !!Showings.findOne({});
 };
 
 Template.showings_list.showings = function () {

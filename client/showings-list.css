@@ -8,7 +8,22 @@
 
 .showing {
     white-space: nowrap;
-    } 
+    }
+
+.showing-list-header {
+    white-space: nowrap;
+    }
+
+.showing-list-header.sortable {
+    cursor: pointer;
+    }
+
+.showing-list-header .sort-icon {
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    top: -1px;
+    }
 
 a.movie {
     color: #2779AA;

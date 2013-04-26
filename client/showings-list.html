@@ -1,9 +1,12 @@
 <template name="showings_list">
-    {{#if showings}}
+    {{#if hasShowings}}
         <table class="showings-list">
             <tr>
                 {{#each headers}}
-                    <th class="showing-list-header">{{name}}{{>sort_icon}}</th>
+                    <th class="showing-list-header{{#if sortId}} sortable{{/if}}">
+                        <span>{{name}}</span>
+                        {{>sort_icon}}
+                    </th>
                 {{/each}}
             </tr>
             {{#each showings}}
@@ -25,7 +28,7 @@
 
 <template name="sort_icon">
     {{#with sortInfo}}
-        <span class="sort-icon">{{#if equal order 1}}asc{{else}}desc{{/if}}</span>
+        <span class="sort-icon ui-icon ui-icon-circle-triangle-{{#if equal order 1}}s{{else}}n{{/if}}"></span>
     {{/with}}
 </template>
         
