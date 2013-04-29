@@ -4,27 +4,17 @@ var IMDB_RATING_REGEXP = /\s(\d\.\d\d)\s/,
         'br': 1,
         'p': 1
     },
-    POSTER_PROXY_PREFIX = '/poster/',
     Fiber = Npm.require('fibers'),
     request = Npm.require('request'),
-    connect = Npm.require('connect'),
-    app = __meteor_bootstrap__.app;
-
-// Adding poster images proxy to kinopoisk.ru
-app.use(POSTER_PROXY_PREFIX, function (req, res) {
-    var kinopoiskSrc = req.url.slice(1);
-    
-    if (kinopoiskSrc) {
-        request({
-            url: kinopoiskSrc,
-            headers: {
+    kinopoiskPosterProxy = new ImageProxy({
+        path: '/poster',
+        param: 'src',
+        modifier: function (request) {
+            request.headers = {
                 'host': 'st.kinopoisk.ru'
             }
-        }).pipe(res);
-    } else {
-        res.end(404);
-    }
-});
+        }
+    });
 
 MoviesManager = {
     
@@ -113,7 +103,7 @@ MoviesManager = {
 
         var info = {
             url: movieUrl,
-            poster: posterElem && posterElem.src ? POSTER_PROXY_PREFIX + posterElem.src : null,
+            poster: posterElem && posterElem.src ? kinopoiskPosterProxy.getImageUrl(posterElem.src) : null,
             description: description || null,
             rating: {
                 kinopoisk: ratingKinopoiskElem ? parseFloat(ratingKinopoiskElem.textContent) || null : null,
