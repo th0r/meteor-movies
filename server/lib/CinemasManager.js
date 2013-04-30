@@ -35,7 +35,7 @@ CinemasManager = {
 
         // Filling `Cinemas` collection
         Meteor.startup(function () {
-            if (!Cinemas.find({id: id}).count()) {
+            if (!Cinemas.findOne({id: id})) {
                 Cinemas.insert({
                     id: id,
                     name: cinema.name,

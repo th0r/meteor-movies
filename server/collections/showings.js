@@ -11,7 +11,6 @@ Meteor.methods({
 });
 
 Meteor.startup(function () {
-
     Showings.fetchAll = function () {
         var synonyms = {};
 
@@ -61,46 +60,29 @@ Meteor.startup(function () {
         .find({})
         .observe({
             'added': function (doc) {
-                if (initialChanges) {
-                    return;
-                }
-                Showings
-                    .find({
-                        movie: doc.from,
-                        originalMovie: {
-                            $exists: false
-                        }
-                    })
-                    .fetch()
-                    .forEach(function (showing) {
-                        Showings.update(showing._id, {
-                            $set: {
-                                originalMovie: showing.movie,
-                                movie: doc.to
-                            }
+                if (!initialChanges) {
+                    Showings
+                        .find({movie: doc.from, originalMovie: {$exists: false}})
+                        .fetch()
+                        .forEach(function (showing) {
+                            Showings.update(showing._id, {
+                                $set: {originalMovie: showing.movie, movie: doc.to}
+                            });
                         });
-                    });
+                }
             },
             removed: function (doc) {
-                if (initialChanges) {
-                    return;
-                }
-                Showings
-                    .find({
-                        movie: doc.to,
-                        originalMovie: doc.from
-                    })
-                    .fetch()
-                    .forEach(function (showing) {
-                        Showings.update(showing._id, {
-                            $set: {
-                                movie: showing.originalMovie
-                            },
-                            $unset: {
-                                originalMovie: 1
-                            }
+                if (!initialChanges) {
+                    Showings
+                        .find({movie: doc.to, originalMovie: doc.from})
+                        .fetch()
+                        .forEach(function (showing) {
+                            Showings.update(showing._id, {
+                                $set: {movie: showing.originalMovie},
+                                $unset: {originalMovie: 1}
+                            });
                         });
-                    });
+                }
             }
         });
     initialChanges = false;
