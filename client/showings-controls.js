@@ -53,6 +53,7 @@ Template.cinemas_list.cinemas = function () {
     cinemas.forEach(function (cinema) {
         cinema.disabled = !Showings.findOne({cinemaId: cinema.id});
         cinema.selected = !cinema.disabled && !disabledCinemas[cinema.id];
+        cinema.lastUpdate = cinema.fetchDate ? moment(cinema.fetchDate).calendar().toLowerCase() : null;
     });
 
     return cinemas;
@@ -61,7 +62,7 @@ Template.cinemas_list.cinemas = function () {
 // ==================================== Time slider ====================================
 
 var TIME_STEP_MINUTES = 30,
-    DAY_START_MINUTES = 9 * 60,
+    DAY_START_MINUTES = App.DAY_START_MINUTES,
     DAY_END_MINUTES = (24 + 3) * 60,
     SLIDER_AUTOUPDATE_INTERVAL_MINUTES = 1;
 
@@ -164,7 +165,7 @@ Template.time_slider.events = {
 
 Template.showings_controls.events = {
     'click #refreshShowings': function () {
-        Meteor.call('refreshShowings');
+        Meteor.call('updateShowings', true);
     }
 };
 

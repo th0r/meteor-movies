@@ -1,4 +1,5 @@
 Meteor.startup(function () {
+
     var TMPL_DEBUG = false,
         SESSION_DEFAULTS = {
             sorting: {
@@ -16,7 +17,7 @@ Meteor.startup(function () {
 
     // Templates rendering watcher
     if (TMPL_DEBUG) {
-        
+
         _.each(Template, function (tmpl, name) {
             var _rendered = tmpl.rendered;
 
@@ -27,7 +28,7 @@ Meteor.startup(function () {
                 }
             }
         });
-        
+
     }
-    
+
 });

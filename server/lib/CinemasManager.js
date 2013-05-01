@@ -1,3 +1,5 @@
+var Fibers = Npm.require('fibers');
+
 CinemasManager = {
 
     cinemas: {},
@@ -71,6 +73,44 @@ CinemasManager = {
         })
     },
 
+    fetchOverdueShowings: function (cb) {
+        var dfds = [],
+            now = Date.now(),
+            showingsDayStart = moment().startOf('day').minutes(App.DAY_START_MINUTES);
+
+        _.each(this.cinemas, function (cinema, id) {
+            var cinemaDoc = Cinemas.findOne({id: id}),
+                fetchDate = cinemaDoc && cinemaDoc.fetchDate;
+
+            if (!fetchDate || (fetchDate < showingsDayStart && now > showingsDayStart)) {
+                var dfd = this.fetchShowings(id)
+                    .then(function (showings) {
+                        cb(id, null, showings);
+                    }, function (error) {
+                        cb(id, error, null);
+                    })
+                    .pipe(function (showings) {
+                        return [id, showings];
+                    }, function () {
+                        return [id].concat(_.toArray(arguments));
+                    });
+
+                dfds.push(dfd);
+            }
+
+        }, this);
+
+        if (!dfds.length) {
+            dfds.push(true);
+        }
+
+        return Du.when(dfds).pipe(function () {
+            return _.toArray(arguments);
+        }, function (dfd) {
+            return _.toArray(arguments).slice(1);
+        })
+    },
+
     fetchShowings: function (id) {
         var dfd = new Du.Deferred(),
             cinema = this.cinemas[id],
@@ -82,6 +122,11 @@ CinemasManager = {
             parser = this.parsers[responseType];
             if (parser) {
                 parser(id, cinema, dfd);
+                dfd.done(function () {
+                    Fibers(function () {
+                        Cinemas.update({id: id}, {$set: {fetchDate: new Date()}});
+                    }).run();
+                });
             } else {
                 dfd.reject('There is no parser for response type "' + responseType + '"');
             }

@@ -1,57 +1,68 @@
-var Fiber = Npm.require('fibers');
+var Fiber = Npm.require('fibers'),
+    SHOWINGS_UPDATE_INTERVAL = 5 * 60 * 1000;
 
 Meteor.publish('showings', function () {
     return Showings.find({});
 });
 
 Meteor.methods({
-    'refreshShowings': function () {
-        Showings.refresh();
+    'updateShowings': function (forceFetchAll) {
+        Showings.update(forceFetchAll);
     }
 });
 
 Meteor.startup(function () {
-    Showings.fetchAll = function () {
+
+    function updateShowings(cinemaId, showings, synonyms) {
+        Fiber(function () {
+            Showings.remove({cinemaId: cinemaId});
+            showings.forEach(function (showing) {
+                var changedMovieName = synonyms[showing.movie];
+
+                if (changedMovieName) {
+                    showing.originalMovie = showing.movie;
+                    showing.movie = changedMovieName;
+                }
+                showing.cinemaId = cinemaId;
+                Showings.insert(showing);
+                MoviesManager.addMovie(showing.movie);
+            });
+        }).run();
+    }
+
+    function getSynonymsHash() {
         var synonyms = {};
 
-        // Making synonyms object
         MovieSynonyms.find({}).fetch().forEach(function (doc) {
             synonyms[doc.from] = doc.to;
         });
 
-        CinemasManager
-            .fetchAllShowings(function (cinemaId, error, showings) {
-                if (showings && showings.length) {
-                    Fiber(function () {
-                        showings.forEach(function (showing) {
-                            var changedMovieName = synonyms[showing.movie];
+        return synonyms;
+    }
 
-                            if (changedMovieName) {
-                                showing.originalMovie = showing.movie;
-                                showing.movie = changedMovieName;
-                            }
-                            showing.cinemaId = cinemaId;
-                            Showings.insert(showing);
-                            MoviesManager.addMovie(showing.movie);
-                        });
-                    }).run();
+    /**
+     * @param [forceFetchAll=false]
+     */
+    Showings.update = function (forceFetchAll) {
+        var synonyms = getSynonymsHash(),
+            method = forceFetchAll ? 'fetchAllShowings' : 'fetchOverdueShowings';
+
+        console.log(forceFetchAll ? 'Fetching showings for all cinemas...' : 'Updating showings...');
+        CinemasManager
+            [method](function (cinemaId, error, showings) {
+                if (error) {
+                    console.log('Error while fetching showings for "' + cinemaId + '" cinema');
+                } else {
+                    console.log('Updating showings for "' + cinemaId + '" cinema');
+                    updateShowings(cinemaId, showings, synonyms);
                 }
             })
-            .done(function () {
-                console.log('Everything fetched fine');
-            })
-            .fail(function () {
-                console.log('Fetch error: ', arguments);
+            .done(function (status) {
+                if (status === true) {
+                    console.log('All showings are actual');
+                }
+                console.log(forceFetchAll ? 'Showings fetching done' : 'Showings updating done');
             });
-    };
-
-    Showings.clear = function () {
-        Showings.remove({});
-    };
-
-    Showings.refresh = function () {
-        this.clear();
-        this.fetchAll();
     };
 
     // Automatically updating showings on add/remove movie synonym
@@ -87,18 +98,11 @@ Meteor.startup(function () {
         });
     initialChanges = false;
 
-    var fetchingNeeded = true,
-        lastShowing = Showings.findOne({}, {$sort: {fetchDate: -1}});
+    Showings.update();
 
-    if (lastShowing) {
-        // Checking, if fetching has already been done today
-        if (moment().isSame(lastShowing.fetchDate, 'day')) {
-            fetchingNeeded = false;
-        }
-    }
+    Meteor.setInterval(function () {
+        console.log('Showings update timer:');
+        Showings.update();
+    }, SHOWINGS_UPDATE_INTERVAL);
 
-    if (true || fetchingNeeded) {
-        // Filling DB with new showings
-        Showings.refresh();
-    }
 });
