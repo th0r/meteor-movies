@@ -31,11 +31,11 @@
         <span class="sort-icon ui-icon ui-icon-circle-triangle-{{#if equal order 1}}s{{else}}n{{/if}}"></span>
     {{/with}}
 </template>
-        
+
 <template name="movie_name">
     <a class="movie" data-movie="{{movie}}" href="{{movieUrl}}" target="_blank">{{movie}}</a>{{>movie_info}}
 </template>
-        
+
 <template name="movie_info">
     {{#if movie}}
         <div class="movie-info-icon ui-icon ui-icon-info">
@@ -48,11 +48,13 @@
     <div class="movie-info" title="{{title}}">
         {{#with info}}
         <div class="col-left">
-            <a class="poster-link" href="{{url}}" target="_blank"><img class="poster" src="{{poster}}"/></a>
+            {{#if poster}}
+                <a class="poster-link" href="{{ url }}" target="_blank"><img class="poster" src="{{ poster }}"/></a>
+            {{/if}}
             <div class="rating">{{>movie_rating}}</div>
         </div>
         <div class="col-right">
-            <div class="description">{{{description}}}</div>
+            <div class="description">{{{ description }}}</div>
         </div>
         {{/with}}
     </div>

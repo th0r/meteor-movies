@@ -17,17 +17,19 @@ var IMDB_RATING_REGEXP = /\s(\d\.\d\d)\s/,
     });
 
 MoviesManager = {
-    
+
     fetching: {},
-    
+
     getMovieUrl: function (title) {
-        return 'http://www.kinopoisk.ru/index.php?first=yes&kp_query=' + encodeURIComponent(title);
+        var toYear = moment().year();
+
+        return 'http://www.kinopoisk.ru/index.php?level=7&m_act[what]=content&m_act[content_find]=film&first=yes&m_act[find]=' + encodeURIComponent(title) + '&m_act[from_year]=' + (toYear - 1) + '&m_act[to_year]=' + toYear;
     },
-    
+
     addMovie: function (title) {
         var movie = Movies.findOne({title: title}),
-            id = movie && movie._id; 
-        
+            id = movie && movie._id;
+
         if (movie && (movie.info || this.fetching[id])) {
             return;
         }
@@ -40,7 +42,7 @@ MoviesManager = {
 
         this._fetchMovieInfo(title, id);
     },
-    
+
     _fetchMovieInfo: function (title, docId) {
         var self = this;
 
@@ -84,9 +86,9 @@ MoviesManager = {
                     );
                 }
         });
-        
+
     },
-    
+
     _parseMovieInfo: function (doc, title, docId, movieUrl) {
         var posterElem = doc.querySelector('.popupBigImage img'),
             descriptionElem = doc.querySelector('.brand_words'),
@@ -94,7 +96,7 @@ MoviesManager = {
             ratingKinopoiskElem = doc.querySelector('.rating_ball'),
             ratingImdbElem = doc.querySelector('#block_rating .block_2 .div1 + div'),
             ratingImdb = ratingImdbElem ? IMDB_RATING_REGEXP.exec(ratingImdbElem.textContent) : null;
-        
+
         if (descriptionElem) {
             description = descriptionElem.innerHTML.replace(HTML_TAGS, function (match, tagName) {
                 return SAFE_TAGS.hasOwnProperty(tagName.toLowerCase()) ? match : '';
@@ -118,7 +120,7 @@ MoviesManager = {
                 }
             });
         }).run();
-        
+
     }
-    
+
 };
