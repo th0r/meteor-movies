@@ -11,16 +11,16 @@ function getRatingGroup(rating) {
     if (!rating) {
         return 'unrated';
     }
-    
+
     while (rating < RATING_GROUPS[i++]) {}
-    
+
     return i;
 }
 
 function formRatingArray(ratingObj) {
     return RATINGS_HEADERS.map(function (ratingId) {
         var rating = ratingObj ? ratingObj[ratingId] : null;
-        
+
         return {
             name: RATING_SITES_MAP[ratingId],
             rating: rating,
@@ -32,7 +32,7 @@ function formRatingArray(ratingObj) {
 Template.sort_icon.sortInfo = function () {
     if (this.sortId) {
         var sorting = Session.get('sorting');
-        
+
         return sorting.by === this.sortId ? sorting : null;
     } else {
         return null;
@@ -184,7 +184,7 @@ Template.movie_name.movieUrl = function () {
 
 Template.movie_info.movie = function () {
     var movie = Movies.findOne({title: this.movie});
-    
+
     return movie && movie.info ? movie : null;
 };
 
@@ -193,10 +193,10 @@ Template.movie_rating.ratings = function () {
 };
 
 Template.movie_info.events = {
-    
+
     'click .movie-info-icon': function (event, tmpl) {
         var $dialog = tmpl.$dialog;
-        
+
         if (!$dialog) {
             var iconNode = event.target,
                 $dialogContent = $(iconNode).find('.movie-info');
@@ -213,19 +213,19 @@ Template.movie_info.events = {
                     width: 550
                 });
         }
-        
+
         if ($dialog.dialog('isOpen')) {
             $dialog.dialog('close');
         } else {
             $dialog.dialog('open');
         }
     }
-    
+
 };
 
 Template.showing_times.times = function () {
-    var from = Session.get('showingsFrom') || Number.NEGATIVE_INFINITY,
-        to = Session.get('showingsTo') || Number.POSITIVE_INFINITY;
+    var from = +App.convertMinuteToMoment(Session.get('showingsFrom')),
+        to = +App.convertMinuteToMoment(Session.get('showingsTo'));
 
     return this.sessions
         .filter(function (showing) {

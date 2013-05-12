@@ -1,5 +1,5 @@
 var Fiber = Npm.require('fibers'),
-    SHOWINGS_UPDATE_INTERVAL = 5 * 60 * 1000;
+    SHOWINGS_UPDATE_INTERVAL = 60 * 1000;
 
 Meteor.publish('showings', function () {
     return Showings.find({});

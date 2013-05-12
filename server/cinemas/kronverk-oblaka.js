@@ -7,14 +7,13 @@ CinemasManager.addCinema('kronverk-oblaka', {
     responseType: 'json',
     parseShowingsPage: function (data) {
         var movies = {};
-        
+
         data.movies
             .forEach(function (movie) {
                 movie.sessions.forEach(function (session) {
                     // Расписание идет для всех кинотеатров. Нам нужно только для нашего.
                     if (session.cinema_id === 58) {
-                        // Добавляем приставку 3D, если это 3D сеанс
-                        var movieName = movie.name,
+                        var movieName = movie.name.trim(),
                             sessions = movies[movieName] = movies[movieName] || [],
                             time = session.time.split(':'),
                             hours = +time[0],
@@ -31,7 +30,7 @@ CinemasManager.addCinema('kronverk-oblaka', {
                     }
                 });
             });
-        
+
         // Конвертируем в нужный нам формат
         var moviesArray = [];
         _.each(movies, function (sessions, movie) {
@@ -40,7 +39,7 @@ CinemasManager.addCinema('kronverk-oblaka', {
                 sessions: _.sortBy(sessions, 'time')
             });
         });
-        
+
         return moviesArray;
     }
 

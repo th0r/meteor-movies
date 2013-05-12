@@ -75,14 +75,13 @@ CinemasManager = {
 
     fetchOverdueShowings: function (cb) {
         var dfds = [],
-            now = Date.now(),
-            showingsDayStart = moment().startOf('day').minutes(App.DAY_START_MINUTES);
+            now = moment();
 
         _.each(this.cinemas, function (cinema, id) {
             var cinemaDoc = Cinemas.findOne({id: id}),
                 fetchDate = cinemaDoc && cinemaDoc.fetchDate;
 
-            if (!fetchDate || (fetchDate < showingsDayStart && now > showingsDayStart)) {
+            if (!fetchDate || !App.getShowingsFetchDate(fetchDate).isSame(App.getShowingsFetchDate(now))) {
                 var dfd = this.fetchShowings(id)
                     .then(function (showings) {
                         cb(id, null, showings);

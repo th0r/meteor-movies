@@ -63,32 +63,26 @@ Template.cinemas_list.cinemas = function () {
 
 var TIME_STEP_MINUTES = 30,
     DAY_START_MINUTES = App.DAY_START_MINUTES,
-    DAY_END_MINUTES = (24 + 3) * 60,
-    SLIDER_AUTOUPDATE_INTERVAL_MINUTES = 1;
+    DAY_END_MINUTES = App.DAY_END_MINUTES,
+    SLIDER_AUTOUPDATE_INTERVAL_MINUTES = 0.1;
 
-function convertMinuteToMoment(minutes) {
-    return moment().startOf('day').minutes(minutes);
-}
+function getClosestMinute() {
+    var nowMinutes = App.getMinutes();
 
-function updateTimeRange(values, $timeText) {
-    var from = convertMinuteToMoment(values[0]),
-        to = convertMinuteToMoment(values[1]);
-
-    $timeText.text('С ' + from.format('HH:mm') + ' по ' + to.format('HH:mm'));
-    Session.set('showingsFrom', +from);
-    Session.set('showingsTo', +to);
-}
-
-function getClosestMinute(to) {
-    to = moment(to);
-
-    var nowMinutes = to.hours() * 60 + to.minutes();
-
-    if (nowMinutes < DAY_START_MINUTES) {
-        nowMinutes += 24 * 60;
+    if (nowMinutes > DAY_END_MINUTES) {
+        nowMinutes = DAY_START_MINUTES;
     }
 
     return Math.ceil(nowMinutes / TIME_STEP_MINUTES) * TIME_STEP_MINUTES;
+}
+
+function updateTimeRange(values, $timeText) {
+    var from = App.convertMinuteToMoment(values[0]),
+        to = App.convertMinuteToMoment(values[1]);
+
+    $timeText.text('С ' + from.format('HH:mm') + ' по ' + to.format('HH:mm'));
+    Session.set('showingsFrom', values[0]);
+    Session.set('showingsTo', values[1]);
 }
 
 function autoUpdateTime($slider) {
@@ -101,15 +95,15 @@ function autoUpdateTime($slider) {
     }
 }
 
-Session.setDefault('showingsFrom', +convertMinuteToMoment(DAY_START_MINUTES));
-Session.setDefault('showingsTo', +convertMinuteToMoment(DAY_END_MINUTES));
+Session.setDefault('showingsFrom', DAY_START_MINUTES);
+Session.setDefault('showingsTo', DAY_END_MINUTES);
 
 Template.time_slider.rendered = function () {
     var $slider = this.$slider;
 
     if (!$slider) {
-        var from = getClosestMinute(Session.get('showingsFrom')),
-            to = getClosestMinute(Session.get('showingsTo')),
+        var from = Session.get('showingsFrom'),
+            to = Session.get('showingsTo'),
             initialValues = [from, to],
             $timeText = $(this.find('.control-time-text')),
             autoTimeCheckbox = this.find('.control-time-auto');
