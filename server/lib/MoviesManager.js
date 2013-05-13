@@ -36,7 +36,8 @@ MoviesManager = {
 
         if (!movie) {
             id = Movies.insert({
-                title: title
+                title: title,
+                isNew: true
             });
         }
 
