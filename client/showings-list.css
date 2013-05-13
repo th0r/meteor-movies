@@ -1,5 +1,18 @@
 .showings-list {
-    border-spacing: 20px 10px;
+    border-collapse: collapse;
+    border-spacing: 0;
+    }
+
+.showings-list td, .showings-list th {
+    padding: 10px 5px;
+    }
+
+.showings-list tr:nth-child(even) td {
+    background: #F5FAFD;
+    }
+
+.showings-list tr:nth-child(odd) td {
+    background: #EAF3FA;
     }
 
 .showings-list .rating {
@@ -81,7 +94,7 @@ a.movie.drop-allowed {
     }
 
 .session.no-session {
-    color: #dddddd;
+    color: #C5C5C5;
     }
 
 .session.is3D:after {
