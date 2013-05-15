@@ -20,6 +20,13 @@
                     {{>time_slider}}
                 </div>
             </div>
+
+            <div class="control control-movies-filter">
+                <div class="control-title">Фильм:</div>
+                <div class="control-container">
+                    {{>movies_filter}}
+                </div>
+            </div>
         </div>
 
         <div id="settings">
@@ -71,6 +78,10 @@
     {{/constant}}
 </template>
 
+<template name="movies_filter">
+    <input id="moviesFilter" type="text" placeholder="Фильтр по названию" value="{{ moviesFilter }}"><span class="clear-filter icon-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-close"></span></span>
+</template>
+
 <template name="movies_synonyms_list">
     {{#each movies}}
         <div class="movies">
@@ -88,7 +99,7 @@
             <div class="movie-synonym">
                 <span class="name">{{from}}</span>
                 <span class="remove">
-                    <span class="remove-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-close"></span></span>
+                    <span class="remove-button icon-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-close"></span></span>
                 </span>
             </div>
         {{/each}}

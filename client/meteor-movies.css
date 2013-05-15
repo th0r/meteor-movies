@@ -24,6 +24,13 @@ html, body {
     min-width: 350px;
     }
 
+.icon-button {
+    display: inline-block;
+    height: 17px;
+    width: 17px;
+    cursor: pointer;
+    }
+
 
 /* jQuery UI Override */
 

@@ -3,15 +3,17 @@ var _get = Session.get,
     _set = Session.set,
     undefined = void 0;
 
-Session.set = function (key, value) {
+Session.set = function (key, value, useLocalStorage) {
     _set.apply(Session, arguments);
-    store.set(key, value);
+    if (useLocalStorage) {
+        store.set(key, value);
+    }
 };
 
-Session.get = function (key) {
+Session.get = function (key, useLocalStorage) {
     var result = _get.apply(Session, arguments);
     
-    if (result === undefined) {
+    if (result === undefined && useLocalStorage) {
         result = store.get(key);
         if (result !== undefined) {
             _set.apply(Session, [key, result]);
@@ -21,10 +23,10 @@ Session.get = function (key) {
     return result;
 };
 
-Session.setDefault = function (key, value) {
-    var result = Session.get(key);
+Session.setDefault = function (key, value, useLocalStorage) {
+    var result = Session.get(key, useLocalStorage);
     
     if (result === undefined) {
-        Session.set(key, value);
+        Session.set(key, value, useLocalStorage);
     }
 };

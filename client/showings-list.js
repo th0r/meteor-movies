@@ -31,7 +31,7 @@ function formRatingArray(ratingObj) {
 
 Template.sort_icon.sortInfo = function () {
     if (this.sortId) {
-        var sorting = Session.get('sorting');
+        var sorting = Session.get('sorting', true);
 
         return sorting.by === this.sortId ? sorting : null;
     } else {
@@ -68,7 +68,7 @@ Template.showings_list.headers = function () {
 
 Template.showings_list.events = {
     'click .showing-list-header.sortable': function () {
-        var sorting = Session.get('sorting');
+        var sorting = Session.get('sorting', true);
 
         if (sorting.by === this.sortId) {
             sorting.order *= -1;
@@ -77,7 +77,7 @@ Template.showings_list.events = {
             sorting.order = this.defaultSortOrder || 1;
         }
 
-        Session.set('sorting', sorting);
+        Session.set('sorting', sorting, true);
     }
 };
 
@@ -92,10 +92,11 @@ Template.showings_list.hasShowings = function () {
 Template.showings_list.showings = function () {
     var movies = {},
         moviesArray = [],
+        moviesFilter = new RegExp(Du.escapeRegexp(Session.get('moviesFilter')), 'i'),
         disabledCinemas = [],
-        sorting = Session.get('sorting');
+        sorting = Session.get('sorting', true);
 
-    _.each(Session.get('disabledCinemas') || {}, function (disabled, cinemaId) {
+    _.each(Session.get('disabledCinemas', true) || {}, function (disabled, cinemaId) {
         if (disabled) {
             disabledCinemas.push(cinemaId);
         }
@@ -103,7 +104,8 @@ Template.showings_list.showings = function () {
 
     Showings
         .find({
-            cinemaId: {$nin: disabledCinemas}
+            cinemaId: {$nin: disabledCinemas},
+            movie: {$regex: moviesFilter}
         })
         .fetch()
         .forEach(function (showing) {
@@ -224,8 +226,8 @@ Template.movie_info.events = {
 };
 
 Template.showing_times.times = function () {
-    var from = +App.convertMinuteToMoment(Session.get('showingsFrom')),
-        to = +App.convertMinuteToMoment(Session.get('showingsTo'));
+    var from = +App.convertMinuteToMoment(Session.get('showingsFrom', true)),
+        to = +App.convertMinuteToMoment(Session.get('showingsTo', true));
 
     return this.sessions
         .filter(function (showing) {

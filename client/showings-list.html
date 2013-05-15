@@ -19,6 +19,10 @@
                     {{/if}}
                     <td class="showing-sessions">{{>showing_times}}</td>
                 </tr>
+            {{else}}
+                <tr>
+                    <td class="no-filtered" colspan="{{ headers.length }}">Нет подходящих сеансов</td>
+                </tr>
             {{/each}}
         </table>
     {{else}}

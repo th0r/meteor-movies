@@ -1,4 +1,5 @@
 .showings-list {
+    width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
     }
@@ -13,6 +14,10 @@
 
 .showings-list tr:nth-child(odd) td {
     background: #EAF3FA;
+    }
+
+.showings-list .no-filtered {
+    text-align: center;
     }
 
 .showings-list .rating {

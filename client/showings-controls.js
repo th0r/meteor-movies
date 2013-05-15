@@ -14,7 +14,7 @@ Template.cinemas_list.created = function () {
 
     // Automatically refreshing buttonset widget
     this.buttonRefreshHandler = Deps.autorun(function () {
-        Session.get('disabledCinemas');
+        Session.get('disabledCinemas', true);
         if (self.$buttons) {
             self.$buttons.buttonset('refresh');
         }
@@ -37,10 +37,10 @@ Template.cinemas_list.rendered = function () {
 
 Template.cinemas_list.events = {
     'change .cinema-button': function (event) {
-        var disabledCinemas = Session.get('disabledCinemas');
+        var disabledCinemas = Session.get('disabledCinemas', true);
 
         disabledCinemas[this.id] = !event.currentTarget.checked;
-        Session.set('disabledCinemas', disabledCinemas);
+        Session.set('disabledCinemas', disabledCinemas, true);
     }
 };
 
@@ -48,7 +48,7 @@ Template.cinemas_list.cinemas = function () {
     var cinemas = Cinemas.find({}).fetch(),
         disabledCinemas;
 
-    disabledCinemas = Session.get('disabledCinemas');
+    disabledCinemas = Session.get('disabledCinemas', true);
 
     cinemas.forEach(function (cinema) {
         cinema.disabled = !Showings.findOne({cinemaId: cinema.id});
@@ -81,12 +81,12 @@ function updateTimeRange(values, $timeText) {
         to = App.convertMinuteToMoment(values[1]);
 
     $timeText.text('С ' + from.format('HH:mm') + ' по ' + to.format('HH:mm'));
-    Session.set('showingsFrom', values[0]);
-    Session.set('showingsTo', values[1]);
+    Session.set('showingsFrom', values[0], true);
+    Session.set('showingsTo', values[1], true);
 }
 
 function autoUpdateTime($slider) {
-    if (Session.get('autoTime')) {
+    if (Session.get('autoTime', true)) {
         var values = $slider.slider('values'),
             startValue = getClosestMinute(),
             endValue = Math.min(DAY_END_MINUTES, Math.max(values[1], startValue));
@@ -95,15 +95,12 @@ function autoUpdateTime($slider) {
     }
 }
 
-Session.setDefault('showingsFrom', DAY_START_MINUTES);
-Session.setDefault('showingsTo', DAY_END_MINUTES);
-
 Template.time_slider.rendered = function () {
     var $slider = this.$slider;
 
     if (!$slider) {
-        var from = Session.get('showingsFrom'),
-            to = Session.get('showingsTo'),
+        var from = Session.get('showingsFrom', true),
+            to = Session.get('showingsTo', true),
             initialValues = [from, to],
             $timeText = $(this.find('.control-time-text')),
             autoTimeCheckbox = this.find('.control-time-auto');
@@ -123,7 +120,7 @@ Template.time_slider.rendered = function () {
 
                 if (handleIndex === 0) {
                     // If left handler was moved, resetting auto time
-                    Session.set('autoTime', false);
+                    Session.set('autoTime', false, true);
                 }
                 updateTimeRange(ui.values, $timeText);
             }
@@ -133,9 +130,9 @@ Template.time_slider.rendered = function () {
 
         // Auto time checkbox update
         this.autoTimeUpdateHandler = Deps.autorun(function () {
-            var autoTime = !!Session.get('autoTime');
+            var autoTime = !!Session.get('autoTime', true);
 
-            autoTimeCheckbox.checked = !!Session.get('autoTime');
+            autoTimeCheckbox.checked = !!Session.get('autoTime', true);
             autoUpdateTime($slider);
         });
 
@@ -151,8 +148,39 @@ Template.time_slider.destroyed = function () {
 
 Template.time_slider.events = {
     'change .control-time-auto': function (event) {
-        Session.set('autoTime', event.currentTarget.checked);
+        Session.set('autoTime', event.currentTarget.checked, true);
     }
+};
+
+// ==================================== Movies filter ====================================
+
+var setMovieFilter = function (value) {
+        Session.set('moviesFilter', value);
+    },
+    clearMovieFilter = function (tmpl) {
+        setMovieFilterDelayed.reset();
+        $(tmpl.find('#moviesFilter')).val('');
+        setMovieFilter('');
+    },
+    setMovieFilterDelayed = Du.debounce(setMovieFilter, 200);
+
+Template.movies_filter.events = {
+    
+    'input, keyup #moviesFilter': function (event, tmpl) {
+        if (event.type === 'keyup' && event.keyCode === 27) {
+            clearMovieFilter(tmpl);
+        } else {
+            setMovieFilterDelayed(event.target.value);
+        }
+    },
+    
+    'click .clear-filter': function (event, tmpl) {
+        clearMovieFilter(tmpl);
+    }
+};
+
+Template.movies_filter.moviesFilter = function () {
+    return Session.get('moviesFilter' );
 };
 
 // ==================================== Settings ====================================
