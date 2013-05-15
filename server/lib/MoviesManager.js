@@ -4,6 +4,8 @@ var IMDB_RATING_REGEXP = /\s(\d\.\d\d)\s/,
         'br': 1,
         'p': 1
     },
+    MOVIE_INFO_OVERDUE_HOURS = 24,
+    MOVIE_INFO_OVERDUE_CHECK_INTERVAL_HOURS = 2,
     Fiber = Npm.require('fibers'),
     request = Npm.require('request'),
     kinopoiskPosterProxy = new ImageProxy({
@@ -30,68 +32,108 @@ MoviesManager = {
         var movie = Movies.findOne({title: title}),
             id = movie && movie._id;
 
-        if (movie && (movie.info || this.fetching[id])) {
-            return;
-        }
-
         if (!movie) {
-            id = Movies.insert({
+            movie = {
                 title: title,
                 isNew: true,
                 dateAdded: new Date()
-            });
+            };
+            id = Movies.insert(movie);
         }
-
-        this._fetchMovieInfo(title, id);
+        
+        if (!movie.info) {
+            this.updateMovieInfo(id);
+        }
     },
 
-    _fetchMovieInfo: function (title, docId) {
-        var self = this;
+    /**
+     * @param {String|Object} movie  Either movie id or movie document.
+     * @private
+     */
+    updateMovieInfo: function (movie) {
+        if (typeof movie === 'string') {
+            movie = Movies.findOne(movie);
+        }
+        
+        if (movie && !this.fetching[movie.title]) {
+            this._fetchMovieInfo(movie.title)
+                .done(function (info) {
+                    Fiber(function () {
+                        Movies.update(movie._id, {
+                            $set: {
+                                info: info,
+                                dateInfoUpdated: new Date()
+                            }
+                        });
+                    }).run();
+                })
+                .fail(function (errorMessage, error) {
+                    console.log(errorMessage + ': ', error);
+                });
+        }
+    },
 
-        this.fetching[docId] = true;
+    _fetchMovieInfo: function (title) {
+        var self = this,
+            dfd = this.fetching[title],
+            errorMessage;
+        
+        if (!dfd) {
+            dfd = this.fetching[title] = new Du.Deferred();
+            dfd.always(function () {
+                delete self.fetching[title];
+            });
 
-        request(
-            {
-                url: this.getMovieUrl(title),
-                headers: {
-                    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:20.0) Gecko/20100101 Firefox/20.0',
-                    'host': 'www.kinopoisk.ru',
-                    'accept-language': 'ru-RU,ru',
-                    'accept': 'text/html'
-                },
-                encoding: 'binary'
-            }, function (err, res, body) {
-                var html,
-                    movieUrl;
-
-                if (err || res.statusCode !== 200) {
-                    err = err || 'response with code ' + response.statusCode + ' returned';
-                    console.log('Error getting info for movie "' + title + '": ', err);
-                } else {
-                    movieUrl = res.request.uri.href;
-                    // Converting response to utf8
-                    html = iconv.decode(new Buffer(body, 'binary'), 'win1251');
-
-                    jsdom.env(
-                        html,
-                        function (errors, window) {
-                            if (errors) {
-                                console.log('Error while converting movie page HTML into DOM:', errors);
-                            } else {
-                                try {
-                                    self._parseMovieInfo(window.document, title, docId, movieUrl);
-                                } catch(e) {
-                                    console.log('Error while parsing info for movie "' + title + '"', e);
+            request(
+                {
+                    url: this.getMovieUrl(title),
+                    headers: {
+                        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:20.0) Gecko/20100101 Firefox/20.0',
+                        'host': 'www.kinopoisk.ru',
+                        'accept-language': 'ru-RU,ru',
+                        'accept': 'text/html'
+                    },
+                    encoding: 'binary'
+                }, function (err, res, body) {
+                    var html,
+                        movieUrl,
+                        movieInfo;
+    
+                    if (err || res.statusCode !== 200) {
+                        err = err || 'response with code ' + response.statusCode + ' returned';
+                        errorMessage = 'Error getting info for movie "' + title + '"';
+                        dfd.rejectWith(self, errorMessage, err);
+                    } else {
+                        movieUrl = res.request.uri.href;
+                        // Converting response to utf8
+                        html = iconv.decode(new Buffer(body, 'binary'), 'win1251');
+    
+                        jsdom.env(
+                            html,
+                            function (errors, window) {
+                                if (errors) {
+                                    errorMessage = 'Error while converting movie page HTML into DOM';
+                                    dfd.rejectWith(self, errorMessage, errors);
+                                } else {
+                                    try {
+                                        movieInfo = self._parseMovieInfo(window.document);
+                                        movieInfo.url = movieUrl;
+                                        dfd.resolveWith(self, movieInfo);
+                                    } catch(e) {
+                                        errorMessage = 'Error while parsing info for movie "' + title + '"';
+                                        dfd.rejectWith(self, errorMessage, e);
+                                    }
                                 }
                             }
-                        }
-                    );
-                }
-        });
-
+                        );
+                    }
+            });
+        }
+        
+        return dfd;
     },
 
-    _parseMovieInfo: function (doc, title, docId, movieUrl) {
+    _parseMovieInfo: function (doc) {
         var posterElem = doc.querySelector('.popupBigImage img'),
             descriptionElem = doc.querySelector('.brand_words'),
             description,
@@ -105,8 +147,7 @@ MoviesManager = {
             });
         }
 
-        var info = {
-            url: movieUrl,
+        return {
             poster: posterElem && posterElem.src ? kinopoiskPosterProxy.getImageUrl(posterElem.src) : null,
             description: description || null,
             rating: {
@@ -114,15 +155,26 @@ MoviesManager = {
                 imdb: ratingImdb ? parseFloat(ratingImdb[1]) || null : null
             }
         };
-
-        Fiber(function () {
-            Movies.update(docId, {
-                $set: {
-                    info: info
-                }
-            });
-        }).run();
-
     }
 
 };
+
+// Periodic movie info updates
+Meteor.setInterval(function () {
+    console.log('Movies info update...');
+    var infoOverdueDate = moment().subtract('hours', MOVIE_INFO_OVERDUE_HOURS).toDate(),
+        moviesUpdatedCount = 0;
+    
+    Movies
+        .find({dateInfoUpdated: {$lt: infoOverdueDate}})
+        .forEach(function (movie) {
+            console.log('Updating info for movie "' + movie.title + '"...');
+            moviesUpdatedCount++;
+            MoviesManager.updateMovieInfo(movie);
+        });
+    
+    if (!moviesUpdatedCount) {
+        console.log('All info is up to date');
+    }
+    
+}, MOVIE_INFO_OVERDUE_CHECK_INTERVAL_HOURS * 60 * 60 * 1000);
