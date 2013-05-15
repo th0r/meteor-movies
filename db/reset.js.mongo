@@ -1,3 +1,11 @@
+// Removing all showings
 db.showings.remove({});
+
+// Removing movie info for fresh update
 db.movies.update({}, {$unset: {info: 1}}, false, true);
+
+// Adding "dateAdded" if it's absent
+db.movies.update({dateAdded: {$exists: false}}, {$set: {dateAdded: new Date()}}, false, true);
+
+// Removing all cinemas
 db.cinemas.remove({});

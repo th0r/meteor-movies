@@ -3,7 +3,14 @@ var RATING_SITES_MAP = {
         'imdb': 'IMDB'
     },
     RATINGS_HEADERS = ['kinopoisk', 'imdb'],
-    RATING_GROUPS = [7, 5, 0];
+    RATING_GROUPS = [7, 5, 0],
+    SORT_ICONS_MAP = {
+        '-1': 'ui-icon-circle-triangle-n',
+        '1': 'ui-icon-circle-triangle-s',
+        'new': 'ui-icon-notice'
+    },
+    SORTING_BY_NAME_ORDER = ['new', 1, -1],
+    DAYS_MOVIE_IS_NEW = 3;
 
 function getRatingGroup(rating) {
     var i = 0;
@@ -30,20 +37,27 @@ function formRatingArray(ratingObj) {
 }
 
 Template.sort_icon.sortInfo = function () {
+    var sortInfo = null;
+    
     if (this.sortId) {
         var sorting = Session.get('sorting', true);
-
-        return sorting.by === this.sortId ? sorting : null;
-    } else {
-        return null;
+        
+        if (sorting.by === this.sortId) {
+            sortInfo = {
+                iconClass: SORT_ICONS_MAP[sorting.order]
+            }
+        }
     }
+    
+    return sortInfo;
 };
 
 Template.showings_list.headers = function () {
     var headers = [
             {
                 name: 'Название',
-                sortId: 'movie-name'
+                sortId: 'movie-name',
+                defaultSortOrder: 'new'
             },
             {
                 name: 'Сеансы'
@@ -68,10 +82,17 @@ Template.showings_list.headers = function () {
 
 Template.showings_list.events = {
     'click .showing-list-header.sortable': function () {
-        var sorting = Session.get('sorting', true);
+        var sorting = Session.get('sorting', true),
+            currentOrderIndex;
 
         if (sorting.by === this.sortId) {
-            sorting.order *= -1;
+            if (this.sortId === 'movie-name') {
+                // Toggling through ordering values
+                currentOrderIndex = SORTING_BY_NAME_ORDER.indexOf(sorting.order);
+                sorting.order = SORTING_BY_NAME_ORDER[(currentOrderIndex + 1) % SORTING_BY_NAME_ORDER.length];
+            } else {
+                sorting.order *= -1;
+            }
         } else {
             sorting.by = this.sortId;
             sorting.order = this.defaultSortOrder || 1;
@@ -94,7 +115,8 @@ Template.showings_list.showings = function () {
         moviesArray = [],
         moviesFilter = new RegExp(Du.escapeRegexp(Session.get('moviesFilter')), 'i'),
         disabledCinemas = [],
-        sorting = Session.get('sorting', true);
+        sorting = Session.get('sorting', true),
+        now = moment();
 
     _.each(Session.get('disabledCinemas', true) || {}, function (disabled, cinemaId) {
         if (disabled) {
@@ -123,6 +145,7 @@ Template.showings_list.showings = function () {
 
         moviesArray.push({
             movie: movieName,
+            isNew: !movie || !movie.dateAdded || now.diff(movie.dateAdded, 'days') < DAYS_MOVIE_IS_NEW,
             sessions: sessions,
             rating: formRatingArray(movie && movie.info.rating)
         });
@@ -130,7 +153,7 @@ Template.showings_list.showings = function () {
 
     // Sorting list
     if (sorting.by === 'movie-name') {
-        moviesArray = _.sortBy(moviesArray, 'movie');
+        moviesArray = _.sortBy(moviesArray, (sorting.order === 'new') ? 'isNew' : 'movie');
     } else if (/^rating-(\w+)/.test(sorting.by)) {
         var ratingId = RegExp.$1;
 
@@ -139,7 +162,7 @@ Template.showings_list.showings = function () {
         });
     }
 
-    if (sorting.order === -1) {
+    if (sorting.order === -1 || sorting.order === 'new') {
         moviesArray = moviesArray.reverse();
     }
 

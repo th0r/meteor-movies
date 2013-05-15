@@ -16,6 +16,14 @@
     background: #EAF3FA;
     }
 
+.showings-list .new {
+    padding: 0 2px 0 6px;
+    }
+
+.showings-list .new .icon-new {
+    vertical-align: middle;
+    }
+
 .showings-list .no-filtered {
     text-align: center;
     }

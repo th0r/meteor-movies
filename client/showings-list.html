@@ -2,6 +2,7 @@
     {{#if hasShowings}}
         <table class="showings-list">
             <tr>
+                <th></th>
                 {{#each headers}}
                     <th class="showing-list-header{{#if sortId}} sortable{{/if}}">
                         <span>{{name}}</span>
@@ -11,6 +12,7 @@
             </tr>
             {{#each showings}}
                 <tr>
+                    <td class="new">{{#if isNew}}<i class="icon-new" title="Новый"></i>{{/if}}</td>
                     <td class="showing">{{>movie_name}}</td>
                     {{#if withRatingHeaders}}
                         {{#each rating}}
@@ -32,7 +34,7 @@
 
 <template name="sort_icon">
     {{#with sortInfo}}
-        <span class="sort-icon ui-icon ui-icon-circle-triangle-{{#if equal order 1}}s{{else}}n{{/if}}"></span>
+        <span class="sort-icon ui-icon {{iconClass}}"></span>
     {{/with}}
 </template>
 

@@ -31,6 +31,13 @@ html, body {
     cursor: pointer;
     }
 
+.icon-new {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background: url(/images/new-icon-24.png) no-repeat transparent;
+    }
+
 
 /* jQuery UI Override */
 
