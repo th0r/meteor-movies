@@ -2,10 +2,9 @@
     {{#if hasShowings}}
         <table class="showings-list">
             <tr>
-                <th></th>
                 {{#each headers}}
                     <th class="showing-list-header{{#if sortId}} sortable{{/if}}">
-                        <span>{{name}}</span>
+                        {{#if name}}<span>{{name}}</span>{{/if}}
                         {{>sort_icon}}
                     </th>
                 {{/each}}

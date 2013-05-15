@@ -55,6 +55,10 @@ Template.sort_icon.sortInfo = function () {
 Template.showings_list.headers = function () {
     var headers = [
             {
+                // Header for "new" column
+                name: null
+            },
+            {
                 name: 'Название',
                 sortId: 'movie-name',
                 defaultSortOrder: 'new'
@@ -67,7 +71,7 @@ Template.showings_list.headers = function () {
 
     if (withRatingHeaders) {
         // Making rating headers
-        var i = 1;
+        var i = 2;
         RATINGS_HEADERS.forEach(function (ratingId) {
             headers.splice(i++, 0, {
                 name: RATING_SITES_MAP[ratingId],
