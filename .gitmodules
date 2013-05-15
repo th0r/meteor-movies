@@ -1,0 +1,3 @@
+[submodule "packages/handlebars-server"]
+	path = packages/handlebars-server
+	url = git@github.com:th0r/meteor-handlebars-server.git
