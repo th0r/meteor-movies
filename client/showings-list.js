@@ -145,7 +145,7 @@ Template.showings_list.showings = function () {
 
     // Converting movies to array, sorted by movie name
     _.each(movies, function (sessions, movieName) {
-        var movie = Movies.findOne({title: movieName, 'info.rating': {$exists: true}}),
+        var movie = Movies.findOne({title: movieName}),
             dateAdded = movie && movie.dateAdded;
 
         moviesArray.push({
@@ -153,7 +153,7 @@ Template.showings_list.showings = function () {
             dateAdded: dateAdded,
             isNew: !dateAdded || now.diff(dateAdded, 'days') < DAYS_MOVIE_IS_NEW,
             sessions: sessions,
-            rating: formRatingArray(movie && movie.info.rating)
+            rating: formRatingArray(movie && movie.info && movie.info.rating)
         });
     });
 
