@@ -215,8 +215,14 @@ Template.movie_name.movieUrl = function () {
 
 Template.movie_info.movie = function () {
     var movie = Movies.findOne({title: this.movie});
-
-    return movie && movie.info ? movie : null;
+    
+    if (movie && movie.info) {
+        movie.dateInfoUpdatedText = 'Информация обновлена ' + moment(movie.dateInfoUpdated).calendar().toLowerCase();
+        
+        return movie
+    } else {
+        return null;
+    }
 };
 
 Template.movie_rating.ratings = function () {
