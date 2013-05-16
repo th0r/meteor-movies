@@ -145,11 +145,13 @@ Template.showings_list.showings = function () {
 
     // Converting movies to array, sorted by movie name
     _.each(movies, function (sessions, movieName) {
-        var movie = Movies.findOne({title: movieName, 'info.rating': {$exists: true}});
+        var movie = Movies.findOne({title: movieName, 'info.rating': {$exists: true}}),
+            dateAdded = movie && movie.dateAdded;
 
         moviesArray.push({
             movie: movieName,
-            isNew: !movie || !movie.dateAdded || now.diff(movie.dateAdded, 'days') < DAYS_MOVIE_IS_NEW,
+            dateAdded: dateAdded,
+            isNew: !dateAdded || now.diff(dateAdded, 'days') < DAYS_MOVIE_IS_NEW,
             sessions: sessions,
             rating: formRatingArray(movie && movie.info.rating)
         });
@@ -157,7 +159,7 @@ Template.showings_list.showings = function () {
 
     // Sorting list
     if (sorting.by === 'movie-name') {
-        moviesArray = _.sortBy(moviesArray, (sorting.order === 'new') ? 'isNew' : 'movie');
+        moviesArray = _.sortBy(moviesArray, (sorting.order === 'new') ? 'dateAdded' : 'movie');
     } else if (/^rating-(\w+)/.test(sorting.by)) {
         var ratingId = RegExp.$1;
 
