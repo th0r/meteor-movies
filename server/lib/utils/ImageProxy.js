@@ -14,7 +14,8 @@ ImageProxy = function(opts) {
         .use(this.path, function (req, res) {
             var query = req.query,
                 imgUrl = query && query[self.param],
-                requestInfo;
+                requestInfo,
+                imgRequest;
 
             if (imgUrl) {
                 requestInfo = {
@@ -24,9 +25,19 @@ ImageProxy = function(opts) {
                 if (self.modifier) {
                     self.modifier(requestInfo);
                 }
-                request(requestInfo).pipe(res);
+                imgRequest = request(requestInfo);
+                imgRequest.pipe(res, {end: false});
+                imgRequest
+                    .on('error', function () {
+                        res.writeHead(404);
+                        res.end();
+                    })
+                    .on('end', function () {
+                        res.end();
+                    });
             } else {
-                res.end(404);
+                res.writeHead(404);
+                res.end();
             }
         });
 };
