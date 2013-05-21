@@ -3,14 +3,21 @@
 </head>
 
 <body>
-    <div class="left-column">
-        <div class="showings">
-            {{>showings_list}}
-        </div>
-    </div>
-    <div class="right-column">
-        <div class="controls">
-            {{>showings_controls}}
-        </div>
-    </div>
+    {{> layout }}
 </body>
+
+<template name="layout">
+    <div class="layout{{#if controlsHidden}} one-column{{/if}}">
+        <div class="left-column">
+            <div class="showings">
+                {{> showings_list }}
+            </div>
+        </div>
+        <div class="right-column">
+            <div class="controls">
+                {{> showings_controls }}
+            </div>
+        </div>
+        <div class="layout-trigger"></div>
+    </div>
+</template>

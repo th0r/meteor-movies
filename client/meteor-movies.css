@@ -13,14 +13,31 @@ html, body {
     width: 30%;
     }
 
-.showings, .controls {
-    margin: 20px;
+.layout-trigger {
+    position: absolute;
+    top: 5px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    background: url(/images/settings-icon.png) transparent no-repeat;
+    cursor: pointer;
+    }
+
+.one-column .left-column {
+    width: 100%;
+    float: none;
+    }
+
+.one-column .right-column {
+    display: none;
     }
 
 .showings {
+    margin: 20px;
     }
 
 .controls {
+    margin: 58px 20px 20px 0;
     min-width: 350px;
     }
 

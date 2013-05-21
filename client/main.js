@@ -4,6 +4,9 @@ Meteor.startup(function () {
         SESSION_DEFAULTS = {
             moviesFilter: ''
         },
+        STORAGE_DEFAULTS = {
+            isControlsShown: false
+        },
         SESSION_DEFAULTS_WITH_STORAGE = {
             sorting: {
                 by: 'movie-name',
@@ -13,11 +16,17 @@ Meteor.startup(function () {
             showingsTo: App.DAY_END_MINUTES,
             autoTime: true,
             disabledCinemas: {}
-        };
+        },
+        undefined = void 0;
 
     // Setting default session values
     _.each(SESSION_DEFAULTS, function (value, key) {
         Session.setDefault(key, value);
+    });
+    _.each(STORAGE_DEFAULTS, function (value, key) {
+        if (store.get(key) === undefined) {
+            store.set(key, value);
+        } 
     });
     _.each(SESSION_DEFAULTS_WITH_STORAGE, function (value, key) {
         Session.setDefault(key, value, true);
