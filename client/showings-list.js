@@ -186,7 +186,7 @@ Template.movie_name.rendered = function () {
             containment: $movie.closest('.showings-list'),
             cursor: 'move',
             opacity: 0.5,
-            revert: 'invalid',
+            revert: true,
             revertDuration: 300,
             scope: 'movie-name'
         })

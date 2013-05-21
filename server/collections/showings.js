@@ -6,8 +6,8 @@ Meteor.publish('showings', function () {
 });
 
 Meteor.methods({
-    'updateShowings': function (forceFetchAll) {
-        Showings.update(forceFetchAll);
+    'refreshShowings': function (forceFetchAll) {
+        Showings.refresh(forceFetchAll);
     }
 });
 
@@ -43,7 +43,7 @@ Meteor.startup(function () {
     /**
      * @param [forceFetchAll=false]
      */
-    Showings.update = function (forceFetchAll) {
+    Showings.refresh = function (forceFetchAll) {
         var synonyms = getSynonymsHash(),
             method = forceFetchAll ? 'fetchAllShowings' : 'fetchOverdueShowings';
 
@@ -98,11 +98,11 @@ Meteor.startup(function () {
         });
     initialChanges = false;
 
-    Showings.update();
+    Showings.refresh();
 
     Meteor.setInterval(function () {
         console.log('Showings update timer:');
-        Showings.update();
+        Showings.refresh();
     }, SHOWINGS_UPDATE_INTERVAL);
 
 });
