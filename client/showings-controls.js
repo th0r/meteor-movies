@@ -180,16 +180,10 @@ Template.movies_filter.events = {
 };
 
 Template.movies_filter.moviesFilter = function () {
-    return Session.get('moviesFilter' );
+    return Session.get('moviesFilter');
 };
 
 // ==================================== Settings ====================================
-
-Template.showings_controls.events = {
-    'click #refreshShowings': function () {
-        Meteor.call('updateShowings', true);
-    }
-};
 
 Template.movies_synonyms_list.movies = function () {
     var movies = {},
@@ -212,7 +206,9 @@ Template.movies_synonyms_list.movies = function () {
 };
 
 Template.movie_synonyms.events = {
+    
     'click .remove': function () {
         MovieSynonyms.remove(this._id);
     }
+    
 };
