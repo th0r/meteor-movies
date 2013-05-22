@@ -1,0 +1,30 @@
+.login-inputs {
+    }
+
+.login-col {
+    float: left;
+    width: 50%;
+    }
+
+.login-input-wrapper {
+    margin-right: 5px;
+    }
+
+.login-input {
+    width: 100%;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    }
+
+.login-form-error {
+    color: red;
+    font-size: 90%;
+    margin-top: 2px;
+    text-align: center;
+    }
+
+.login-buttons {
+    margin-top: 7px;
+    text-align: center;
+    }

@@ -2,6 +2,14 @@
     margin-bottom: 25px;
     }
 
+.control:last-child {
+    margin-bottom: 5px;
+    }
+
+.control p {
+    margin: 0 0 15px;
+    }
+
 .control-title {
     font-size: 115%;
     margin-bottom: 8px;
@@ -33,6 +41,12 @@
     position: relative;
     left: 5px;
     top: 2px;
+    }
+
+.control-logout .logout-button {
+    left: 5px;
+    top: 3px;
+    position: relative;
     }
 
 .control-synonyms .movies {
