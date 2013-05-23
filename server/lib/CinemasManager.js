@@ -1,4 +1,5 @@
-var Fibers = Npm.require('fibers');
+var Fibers = Npm.require('fibers'),
+    SHOWINGS_OVERDUE_HOURS = 4;
 
 CinemasManager = {
 
@@ -81,7 +82,10 @@ CinemasManager = {
             var cinemaDoc = Cinemas.findOne({id: id}),
                 fetchDate = cinemaDoc && cinemaDoc.fetchDate;
 
-            if (!fetchDate || !App.getShowingsFetchDate(fetchDate).isSame(App.getShowingsFetchDate(now))) {
+            if (!fetchDate ||
+                !App.getShowingsFetchDate(fetchDate).isSame(App.getShowingsFetchDate(now)) || 
+                now.diff(fetchDate, 'hours') >= SHOWINGS_OVERDUE_HOURS) {
+                // Updating showings if it's another "showings day" or a SHOWINGS_OVERDUE_HOURS has been passed since last fetch
                 var dfd = this.fetchShowings(id)
                     .then(function (showings) {
                         cb(id, null, showings);
