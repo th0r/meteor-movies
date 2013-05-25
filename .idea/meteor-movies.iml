@@ -12,6 +12,8 @@
     <orderEntry type="library" name="Underscore JS" level="project" />
     <orderEntry type="library" name="jQuery UI Custom Build" level="project" />
     <orderEntry type="library" name="Node.js v0.10.5 Core Modules" level="application" />
+    <orderEntry type="library" name="Node.js v0.10.7 Core Modules" level="application" />
+    <orderEntry type="library" name="jQuery-1.7.2" level="application" />
   </component>
 </module>
 

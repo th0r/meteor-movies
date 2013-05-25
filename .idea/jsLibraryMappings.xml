@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{Node.js v0.10.5 Core Modules, Underscore JS, jQuery UI Custom Build}" />
+    <file url="PROJECT" libraries="{Node.js v0.10.7 Core Modules, Underscore JS, jQuery UI Custom Build, jQuery-1.7.2}" />
+    <includedPredefinedLibrary name="Node.js Globals" />
   </component>
 </project>
 
