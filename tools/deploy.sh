@@ -2,7 +2,7 @@
 
 set -e
 # Setting script directory as the current one
-SCRIPT_DIR="$(dirname "$0")"
+SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd -P)
 cd "$SCRIPT_DIR"
 
 BUNDLE_NAME="meteor-movies"
@@ -57,7 +57,8 @@ npm uninstall fibers
 npm install fibers
 
 echo "\nResetting database..."
-cd ${SCRIPT_DIR}/../db
+cd ${SCRIPT_DIR}
+cd ../db
 mongo meteor-movies reset.js.mongo
 
 echo "\nCleaning build directory..."
