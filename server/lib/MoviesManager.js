@@ -124,6 +124,10 @@ MoviesManager = {
                                         dfd.rejectWith(self, errorMessage, e);
                                     }
                                 }
+                                // Closing window to prevent jsdom memory leaks
+                                if (window) {
+                                    window.close();
+                                }
                             }
                         );
                     }

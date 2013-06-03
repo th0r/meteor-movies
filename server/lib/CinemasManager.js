@@ -19,6 +19,10 @@ CinemasManager = {
                             dfd.reject('Error while parsing showings for cinema with id "' + id + '"', e);
                         }
                     }
+                    // Closing window to prevent jsdom memory leaks
+                    if (window) {
+                        window.close();
+                    }
                 }
             );
         },
