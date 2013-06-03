@@ -3,7 +3,7 @@ Package.describe({
 });
 
 Npm.depends({
-    'jsdom': '0.5.5'
+    'jsdom': '0.6.5'
 });
 
 Package.on_use(function (api) {
