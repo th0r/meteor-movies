@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="jQuery-1.8.2" type="javaScript">
+    <properties>
+      <option name="frameworkName" value="jQuery" />
+      <option name="frameworkVersion" value="1.8.2" />
+      <sourceFilesUrls>
+        <item url="file://$PROJECT_DIR$/.meteor/local/build/static_cacheable/packages/jquery/jquery.js" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/.meteor/local/build/static_cacheable/packages/jquery/jquery.js" />
+    </CLASSES>
+    <DOCUMENTATION>
+      <root url="file://$USER_HOME$/Library/Caches/WebStorm6/extLibs/http_api.jquery.com_resources_api.xml.xml" />
+    </DOCUMENTATION>
+    <SOURCES />
+  </library>
+</component>

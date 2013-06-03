@@ -4,8 +4,8 @@ var IMDB_RATING_REGEXP = /\s(\d\.\d\d)\s/,
         'br': 1,
         'p': 1
     },
-    MOVIE_INFO_OVERDUE_HOURS = 24,
-    MOVIE_INFO_OVERDUE_CHECK_INTERVAL_HOURS = 2,
+    MOVIE_INFO_OVERDUE_HOURS = 6,
+    MOVIE_INFO_OVERDUE_CHECK_INTERVAL_HOURS = 1,
     Fiber = Npm.require('fibers'),
     request = Npm.require('request'),
     kinopoiskPosterProxy = new ImageProxy({
@@ -40,7 +40,7 @@ MoviesManager = {
             };
             id = Movies.insert(movie);
         }
-        
+
         if (!movie.info) {
             this.updateMovieInfo(id);
         }
@@ -54,7 +54,7 @@ MoviesManager = {
         if (typeof movie === 'string') {
             movie = Movies.findOne(movie);
         }
-        
+
         if (movie && !this.fetching[movie.title]) {
             this._fetchMovieInfo(movie.title)
                 .done(function (info) {
@@ -77,7 +77,7 @@ MoviesManager = {
         var self = this,
             dfd = this.fetching[title],
             errorMessage;
-        
+
         if (!dfd) {
             dfd = this.fetching[title] = new Du.Deferred();
             dfd.always(function () {
@@ -95,10 +95,10 @@ MoviesManager = {
                     },
                     encoding: 'binary'
                 }, function (err, res, body) {
-                    var html,
+                    var pageHTML,
                         movieUrl,
                         movieInfo;
-    
+
                     if (err || res.statusCode !== 200) {
                         err = err || 'response with code ' + response.statusCode + ' returned';
                         errorMessage = 'Error getting info for movie "' + title + '"';
@@ -106,52 +106,39 @@ MoviesManager = {
                     } else {
                         movieUrl = res.request.uri.href;
                         // Converting response to utf8
-                        html = iconv.decode(new Buffer(body, 'binary'), 'win1251');
-    
-                        jsdom.env(
-                            html,
-                            function (errors, window) {
-                                if (errors) {
-                                    errorMessage = 'Error while converting movie page HTML into DOM';
-                                    dfd.rejectWith(self, errorMessage, errors);
-                                } else {
-                                    try {
-                                        movieInfo = self._parseMovieInfo(window.document);
-                                        movieInfo.url = movieUrl;
-                                        dfd.resolveWith(self, movieInfo);
-                                    } catch(e) {
-                                        errorMessage = 'Error while parsing info for movie "' + title + '"';
-                                        dfd.rejectWith(self, errorMessage, e);
-                                    }
-                                }
-                            }
-                        );
+                        pageHTML = iconv.decode(new Buffer(body, 'binary'), 'win1251');
+
+                        try {
+                            movieInfo = self._parseMovieInfo($(pageHTML));
+                            movieInfo.url = movieUrl;
+                            dfd.resolveWith(self, movieInfo);
+                        } catch (e) {
+                            errorMessage = 'Error while parsing info for movie "' + title + '"';
+                            dfd.rejectWith(self, errorMessage, e);
+                        }
                     }
             });
         }
-        
+
         return dfd;
     },
 
-    _parseMovieInfo: function (doc) {
-        var posterElem = doc.querySelector('.popupBigImage img'),
-            descriptionElem = doc.querySelector('.brand_words'),
-            description,
-            ratingKinopoiskElem = doc.querySelector('.rating_ball'),
-            ratingImdbElem = doc.querySelector('#block_rating .block_2 .div1 + div'),
-            ratingImdb = ratingImdbElem ? IMDB_RATING_REGEXP.exec(ratingImdbElem.textContent) : null;
-
-        if (descriptionElem) {
-            description = descriptionElem.innerHTML.replace(HTML_TAGS, function (match, tagName) {
-                return SAFE_TAGS.hasOwnProperty(tagName.toLowerCase()) ? match : '';
-            });
-        }
+    _parseMovieInfo: function ($doc) {
+        var posterSrc = $doc.find('.popupBigImage img').attr('src'),
+            description = $doc.find('.brand_words')
+                .html()
+                .replace(HTML_TAGS, function (match, tagName) {
+                    return SAFE_TAGS.hasOwnProperty(tagName.toLowerCase()) ? match : '';
+                }),
+            $ratingKinopoisk = $doc.find('.rating_ball'),
+            $ratingImdb = $doc.find('#block_rating .block_2 .div1 + div'),
+            ratingImdb = $ratingImdb.length ? IMDB_RATING_REGEXP.exec($ratingImdb.text()) : null;
 
         return {
-            poster: posterElem && posterElem.src ? kinopoiskPosterProxy.getImageUrl(posterElem.src) : null,
+            poster: posterSrc ? kinopoiskPosterProxy.getImageUrl(posterSrc) : null,
             description: description || null,
             rating: {
-                kinopoisk: ratingKinopoiskElem ? parseFloat(ratingKinopoiskElem.textContent) || null : null,
+                kinopoisk: parseFloat($ratingKinopoisk.text()) || null,
                 imdb: ratingImdb ? parseFloat(ratingImdb[1]) || null : null
             }
         };
@@ -164,7 +151,7 @@ Meteor.setInterval(function () {
     console.log('Movies info update...');
     var infoOverdueDate = moment().subtract('hours', MOVIE_INFO_OVERDUE_HOURS).toDate(),
         moviesUpdatedCount = 0;
-    
+
     Movies
         .find({dateInfoUpdated: {$lt: infoOverdueDate}})
         .forEach(function (movie) {
@@ -172,9 +159,9 @@ Meteor.setInterval(function () {
             moviesUpdatedCount++;
             MoviesManager.updateMovieInfo(movie);
         });
-    
+
     if (!moviesUpdatedCount) {
         console.log('All info is up to date');
     }
-    
+
 }, MOVIE_INFO_OVERDUE_CHECK_INTERVAL_HOURS * 60 * 60 * 1000);

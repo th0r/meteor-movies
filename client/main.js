@@ -10,7 +10,7 @@ Meteor.startup(function () {
         SESSION_DEFAULTS_WITH_STORAGE = {
             sorting: {
                 by: 'movie-name',
-                order: 1
+                order: 'new'
             },
             showingsFrom: App.DAY_START_MINUTES,
             showingsTo: App.DAY_END_MINUTES,

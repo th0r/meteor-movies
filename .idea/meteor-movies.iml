@@ -3,15 +3,20 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.meteor/local" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/cheerio/.npm" />
       <excludeFolder url="file://$MODULE_DIR$/packages/iconv/.npm" />
       <excludeFolder url="file://$MODULE_DIR$/packages/jsdom/.npm" />
       <excludeFolder url="file://$MODULE_DIR$/packages/moment/.npm" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/session-storage/.npm" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Underscore JS" level="project" />
     <orderEntry type="library" name="jQuery UI Custom Build" level="project" />
-    <orderEntry type="library" name="Node.js v0.10.5 Core Modules" level="application" />
+    <orderEntry type="library" name="Node.js v0.10.7 Core Modules" level="application" />
+    <orderEntry type="library" name="jQuery-1.7.2" level="application" />
+    <orderEntry type="library" name="Node.js v0.10.8 Core Modules" level="application" />
+    <orderEntry type="library" name="jQuery-1.8.2" level="project" />
   </component>
 </module>
 

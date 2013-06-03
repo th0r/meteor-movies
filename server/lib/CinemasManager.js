@@ -1,4 +1,5 @@
-var Fibers = Npm.require('fibers');
+var Fibers = Npm.require('fibers'),
+    SHOWINGS_OVERDUE_HOURS = 4;
 
 CinemasManager = {
 
@@ -6,23 +7,20 @@ CinemasManager = {
 
     parsers: {
         'html': function (id, cinema, dfd) {
-            jsdom.env(
-                _.result(cinema, 'showingsUrl'),
-                function (errors, window) {
-                    if (errors) {
-                        dfd.reject('Error while downloading web page', errors);
-                    } else {
-                        try {
-                            dfd.resolve(cinema.parseShowingsPage(window.document));
-                        } catch(e) {
-                            dfd.reject('Error while parsing showings for cinema with id "' + id + '"', e);
-                        }
+            Meteor.http.get(_.result(cinema, 'showingsUrl'), function (error, result) {
+                if (error) {
+                    dfd.reject('Error while downloading web page', error);
+                } else {
+                    try {
+                        dfd.resolve(cinema.parseShowingsPage($(result.content)));
+                    } catch (e) {
+                        dfd.reject('Error while parsing showings for cinema with id "' + id + '"', e);
                     }
                 }
-            );
+            });
         },
         'json': function (id, cinema, dfd) {
-            Meteor.http.get(cinema.showingsUrl, function (error, result) {
+            Meteor.http.get(_.result(cinema, 'showingsUrl'), function (error, result) {
                 if (error || !result.data) {
                     dfd.reject('Error while parsing showings for cinema with id "' + id + '"', error);
                 } else {
@@ -81,7 +79,10 @@ CinemasManager = {
             var cinemaDoc = Cinemas.findOne({id: id}),
                 fetchDate = cinemaDoc && cinemaDoc.fetchDate;
 
-            if (!fetchDate || !App.getShowingsFetchDate(fetchDate).isSame(App.getShowingsFetchDate(now))) {
+            if (!fetchDate ||
+                !App.getShowingsFetchDate(fetchDate).isSame(App.getShowingsFetchDate(now)) || 
+                now.diff(fetchDate, 'hours') >= SHOWINGS_OVERDUE_HOURS) {
+                // Updating showings if it's another "showings day" or a SHOWINGS_OVERDUE_HOURS has been passed since last fetch
                 var dfd = this.fetchShowings(id)
                     .then(function (showings) {
                         cb(id, null, showings);
