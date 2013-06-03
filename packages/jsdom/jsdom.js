@@ -1,1 +1,0 @@
-jsdom = Npm.require('jsdom');

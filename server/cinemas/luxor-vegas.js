@@ -6,24 +6,22 @@ CinemasManager.addCinema('luxor-vegas', {
     shortName: 'Vegas',
 
     showingsUrl: 'http://www.luxorfilm.ru/cinema/vegas/',
-    parseShowingsPage: function (document) {
-        var showingsRows = _.toArray(document.querySelectorAll('.cinema_time_info'));
-
-        return showingsRows.map(function (rowElem) {
+    parseShowingsPage: function ($html) {
+        return $html.find('.cinema_time_info').map(function () {
             var is3D = false,
-                movieName = rowElem.querySelector('h3 a').textContent
+                movieName = this.find('h3 a').text()
                     .trim()
                     .replace(SESSION_3D, function () {
                         is3D = true;
                         
                         return '';
                     });
-            
+
             return {
                 movie: movieName,
-                sessions: _.toArray(rowElem.querySelectorAll('.time_of_day_shedule .shedule-data'))
-                    .map(function (timeElem) {
-                        var time = timeElem.firstChild.textContent.trim().split(':'),
+                sessions: this.find('.time_of_day_shedule .shedule-data')
+                    .map(function (i, elem) {
+                        var time = elem.children[0].data.trim().split(':'),
                             hours = +time[0],
                             sessionDate = moment().startOf('day').add({
                                 days: (hours < 4) ? 1 : 0,

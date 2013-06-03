@@ -95,7 +95,7 @@ MoviesManager = {
                     },
                     encoding: 'binary'
                 }, function (err, res, body) {
-                    var html,
+                    var pageHTML,
                         movieUrl,
                         movieInfo;
 
@@ -106,30 +106,16 @@ MoviesManager = {
                     } else {
                         movieUrl = res.request.uri.href;
                         // Converting response to utf8
-                        html = iconv.decode(new Buffer(body, 'binary'), 'win1251');
+                        pageHTML = iconv.decode(new Buffer(body, 'binary'), 'win1251');
 
-                        jsdom.env(
-                            html,
-                            function (errors, window) {
-                                if (errors) {
-                                    errorMessage = 'Error while converting movie page HTML into DOM';
-                                    dfd.rejectWith(self, errorMessage, errors);
-                                } else {
-                                    try {
-                                        movieInfo = self._parseMovieInfo(window.document);
-                                        movieInfo.url = movieUrl;
-                                        dfd.resolveWith(self, movieInfo);
-                                    } catch(e) {
-                                        errorMessage = 'Error while parsing info for movie "' + title + '"';
-                                        dfd.rejectWith(self, errorMessage, e);
-                                    }
-                                }
-                                // Closing window to prevent jsdom memory leaks
-                                if (window) {
-                                    window.close();
-                                }
-                            }
-                        );
+                        try {
+                            movieInfo = self._parseMovieInfo($(pageHTML));
+                            movieInfo.url = movieUrl;
+                            dfd.resolveWith(self, movieInfo);
+                        } catch (e) {
+                            errorMessage = 'Error while parsing info for movie "' + title + '"';
+                            dfd.rejectWith(self, errorMessage, e);
+                        }
                     }
             });
         }
@@ -137,25 +123,22 @@ MoviesManager = {
         return dfd;
     },
 
-    _parseMovieInfo: function (doc) {
-        var posterElem = doc.querySelector('.popupBigImage img'),
-            descriptionElem = doc.querySelector('.brand_words'),
-            description,
-            ratingKinopoiskElem = doc.querySelector('.rating_ball'),
-            ratingImdbElem = doc.querySelector('#block_rating .block_2 .div1 + div'),
-            ratingImdb = ratingImdbElem ? IMDB_RATING_REGEXP.exec(ratingImdbElem.textContent) : null;
-
-        if (descriptionElem) {
-            description = descriptionElem.innerHTML.replace(HTML_TAGS, function (match, tagName) {
-                return SAFE_TAGS.hasOwnProperty(tagName.toLowerCase()) ? match : '';
-            });
-        }
+    _parseMovieInfo: function ($doc) {
+        var posterSrc = $doc.find('.popupBigImage img').attr('src'),
+            description = $doc.find('.brand_words')
+                .html()
+                .replace(HTML_TAGS, function (match, tagName) {
+                    return SAFE_TAGS.hasOwnProperty(tagName.toLowerCase()) ? match : '';
+                }),
+            $ratingKinopoisk = $doc.find('.rating_ball'),
+            $ratingImdb = $doc.find('#block_rating .block_2 .div1 + div'),
+            ratingImdb = $ratingImdb.length ? IMDB_RATING_REGEXP.exec($ratingImdb.text()) : null;
 
         return {
-            poster: posterElem && posterElem.src ? kinopoiskPosterProxy.getImageUrl(posterElem.src) : null,
+            poster: posterSrc ? kinopoiskPosterProxy.getImageUrl(posterSrc) : null,
             description: description || null,
             rating: {
-                kinopoisk: ratingKinopoiskElem ? parseFloat(ratingKinopoiskElem.textContent) || null : null,
+                kinopoisk: parseFloat($ratingKinopoisk.text()) || null,
                 imdb: ratingImdb ? parseFloat(ratingImdb[1]) || null : null
             }
         };

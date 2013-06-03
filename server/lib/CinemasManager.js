@@ -7,27 +7,20 @@ CinemasManager = {
 
     parsers: {
         'html': function (id, cinema, dfd) {
-            jsdom.env(
-                _.result(cinema, 'showingsUrl'),
-                function (errors, window) {
-                    if (errors) {
-                        dfd.reject('Error while downloading web page', errors);
-                    } else {
-                        try {
-                            dfd.resolve(cinema.parseShowingsPage(window.document));
-                        } catch(e) {
-                            dfd.reject('Error while parsing showings for cinema with id "' + id + '"', e);
-                        }
-                    }
-                    // Closing window to prevent jsdom memory leaks
-                    if (window) {
-                        window.close();
+            Meteor.http.get(_.result(cinema, 'showingsUrl'), function (error, result) {
+                if (error) {
+                    dfd.reject('Error while downloading web page', error);
+                } else {
+                    try {
+                        dfd.resolve(cinema.parseShowingsPage($(result.content)));
+                    } catch (e) {
+                        dfd.reject('Error while parsing showings for cinema with id "' + id + '"', e);
                     }
                 }
-            );
+            });
         },
         'json': function (id, cinema, dfd) {
-            Meteor.http.get(cinema.showingsUrl, function (error, result) {
+            Meteor.http.get(_.result(cinema, 'showingsUrl'), function (error, result) {
                 if (error || !result.data) {
                     dfd.reject('Error while parsing showings for cinema with id "' + id + '"', error);
                 } else {

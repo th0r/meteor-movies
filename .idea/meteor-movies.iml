@@ -3,6 +3,7 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.meteor/local" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/cheerio/.npm" />
       <excludeFolder url="file://$MODULE_DIR$/packages/iconv/.npm" />
       <excludeFolder url="file://$MODULE_DIR$/packages/jsdom/.npm" />
       <excludeFolder url="file://$MODULE_DIR$/packages/moment/.npm" />
