@@ -1,4 +1,4 @@
-var FROM = 'movies@grunin-ya.ru',
+var FROM = App.APP_EMAIL,
     SUBJECT_TMPL_SUFFIX = '-subject',
     BODY_TMPL_SUFFIX = '-body',
     templates = Handlebars.templates;
