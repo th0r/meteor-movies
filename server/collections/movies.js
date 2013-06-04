@@ -5,11 +5,28 @@ var EMAIL_SEND_DELAY = 5 * 60 * 1000,
         newMovies.forEach(function (movie) {
             Movies.update(movie._id, {$unset: {isNew: 1}});
         });
+        
         // Sending notification email
-        console.log('Sending email about new movies...');
-        App.sendEmail('new-movies', {
-            movies: newMovies
-        });
+        console.log('Notifying users about new movies...');
+        // Collecting subscribers
+        var subscribers = Meteor.users
+            .find({
+                'notifyAbout.newMovies': true
+            }, {
+                fields: {emails: 1}
+            })
+            .fetch();
+        if (subscribers.length) {
+            var emails = subscribers.map(function (subscriber) {
+                return subscriber.emails[0].address;
+            });
+            console.log('Sending emails to: ', emails);
+            App.sendEmail(emails, 'new-movies', {
+                movies: newMovies
+            });
+        } else {
+            console.log('There are no subscribers for new movies email');
+        }
         newMovies = [];
     }, EMAIL_SEND_DELAY);
 

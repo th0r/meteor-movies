@@ -1,0 +1,1 @@
+MovieSynonyms = new Meteor.Collection('movie-synonyms');

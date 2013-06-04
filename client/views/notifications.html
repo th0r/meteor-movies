@@ -1,0 +1,18 @@
+<template name="notifications">
+{{# constant }}
+    <div class="notifications-container">
+        {{> error_notification }}
+    </div>
+{{/ constant }}
+</template>
+
+<template name="error_notification">
+    <div id="error" class="notification ui-widget ui-state-error ui-corner-all">
+        <a class="ui-notify-close" href="#">
+            <span class="ui-icon ui-icon-close" style="float:right"></span>
+        </a>
+        
+        <span class="notification-icon ui-icon ui-icon-alert"></span>
+        <strong>Ошибка: </strong>#{message}
+    </div>
+</template>

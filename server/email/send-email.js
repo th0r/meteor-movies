@@ -1,6 +1,4 @@
-var TO = 'grunin.ya@yandex.ru',
-    FROM = 'movies@grunin-ya.ru',
-    
+var FROM = 'movies@grunin-ya.ru',
     SUBJECT_TMPL_SUFFIX = '-subject',
     BODY_TMPL_SUFFIX = '-body',
     templates = Handlebars.templates;
@@ -12,16 +10,22 @@ function getTemplate(tmplName) {
     return Handlebars.compile(tmpl);
 }
 
-App.sendEmail = function (messageTmplName, tmplData) {
+App.sendEmail = function (to, messageTmplName, tmplData) {
+    if (!_.isArray(to)) {
+        to = [to];
+    }
     try {
         var message = {
             from: FROM,
-            to: TO,
             subject: templates[messageTmplName + SUBJECT_TMPL_SUFFIX](tmplData),
             html: templates[messageTmplName + BODY_TMPL_SUFFIX](tmplData)
         };
 
-        Email.send(message);
+        to.forEach(function (to) {
+            Email.send(_.extend({}, message, {
+                to: to
+            }));
+        });
     } catch (e) {
         console.log('Error sending email: ', e);
     }

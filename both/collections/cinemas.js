@@ -1,0 +1,1 @@
+Cinemas = new Meteor.Collection('cinemas');

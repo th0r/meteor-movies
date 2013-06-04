@@ -71,16 +71,6 @@
     <input id="moviesFilter" type="text" placeholder="Фильтр по названию" value="{{ moviesFilter }}"><span class="clear-filter icon-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-close"></span></span>
 </template>
 
-<template name="movies_synonyms_list">
-    {{#each movies}}
-        <div class="movies">
-            {{>movie_synonyms}}
-        </div>
-    {{else}}
-        <div class="movies no-synonyms">Нет синонимов</div>
-    {{/each}}
-</template>
-
 <template name="settings">
     {{# if currentUser }}
         {{> settings_for_registered_user }}
@@ -96,18 +86,43 @@
             <div>Email: {{> login_email }}{{> logout_button }}</div>
         </div>
     </div>
-    <div class="control control-synonyms">
-        <div class="control-title">Синонимы:</div>
+    <div class="control control-notifications">
+        <div class="control-title">Оповещения:</div>
         <div class="control-container">
-            {{>movies_synonyms_list}}
+            {{> notification_settings }}
         </div>
     </div>
+    {{# if currentUser.admin }}
+        <div class="control control-synonyms">
+            <div class="control-title">Синонимы:</div>
+            <div class="control-container">
+                {{> movies_synonyms_list }}
+            </div>
+        </div>
+    {{/ if }}
 </template>
 
 <template name="settings_for_unregistered_user">
     <p>Здесь можно настроить email-оповещение о новых фильмах, вышедших в прокат.</p>
     <p>Для этого вы должны быть зарегистрированы:</p>
     {{> login_form }}
+</template>
+
+<template name="notification_settings">
+    <label for="emailNewMovies">
+        <input id="emailNewMovies" type="checkbox"{{# if notifyAbout.newMovies }} checked{{/ if }}>
+        Посылать email о новых фильмах
+    </label>
+</template>
+
+<template name="movies_synonyms_list">
+    {{#each movies}}
+    <div class="movies">
+        {{>movie_synonyms}}
+    </div>
+    {{else}}
+    <div class="movies no-synonyms">Нет синонимов</div>
+    {{/each}}
 </template>
 
 <template name="movie_synonyms">

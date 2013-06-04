@@ -1,0 +1,20 @@
+.notifications-container {
+    display: none;
+    position: absolute;
+    top: 13px;
+    right: 86px;
+    width: 320px;
+    }
+
+.notification {
+    padding: 7px;
+    }
+
+.notification .notification-icon {
+    float: left;
+    margin: 0 5px 0 0;
+    }
+
+.notification .ui-notify-close {
+    float: right;
+    }

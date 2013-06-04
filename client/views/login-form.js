@@ -1,6 +1,11 @@
 // ==================================== Login/register form ====================================
 
+var ENROLL_ACCOUNT_TOKEN = Accounts._enrollAccountToken;
+
 function showError(error) {
+    if (error) {
+        error = App.stripErrorCode(error);
+    }
     Session.set('loginFormError', error || null);
 }
 
@@ -23,9 +28,8 @@ function login(info) {
     var dfd = new Du.Deferred();
     
     Meteor.loginWithPassword(info.email, info.password, function (error) {
-        debugger;
         if (error) {
-            showError(error.message);
+            showError(error);
             dfd.reject(error);
         } else {
             dfd.resolve();
@@ -58,7 +62,7 @@ function register(info) {
         password: info.password
     }, function (error) {
         if (error) {
-            showError(error.message);
+            showError(error);
             dfd.reject(error);
         } else {
             dfd.resolve();
@@ -67,6 +71,8 @@ function register(info) {
 
     return dfd;
 }
+
+// ==================================== Login form ====================================
 
 Template.login_form.rendered = function () {
     $('button').button();
@@ -91,6 +97,61 @@ Template.login_form.events = {
 
 Template.login_form.formError = function () {
     return Session.get('loginFormError');
+};
+
+// ==================================== Enroll account dialog ====================================
+
+function enrollAccount(password) {
+    var dfd = new Du.Deferred();
+
+    Accounts.resetPassword(ENROLL_ACCOUNT_TOKEN, password, function (error) {
+        if (error) {
+            App.showNotification('error', {
+                message: App.stripErrorCode(error)
+            });
+            dfd.reject(error);
+        } else {
+            dfd.resolve();
+        }
+    });
+    
+    return dfd;
+}
+
+Template.enroll_account.enrollAccountToken = ENROLL_ACCOUNT_TOKEN;
+
+Template.enroll_account_dialog.rendered = function () {
+    this.$dialog = $(this.find('.enroll-account-dialog'))
+        .dialog({
+            title: 'Установка пароля для учетной записи',
+            resizable: false,
+            draggable: false,
+            modal: true,
+            width: 350,
+            buttons: [{
+                text: 'Установить пароль',
+                click: function () {
+                    var $dialog = $(this);
+                    
+                    enrollAccount($dialog.find('.password').val())
+                        .always(function () {
+                            $dialog.dialog('close');
+                        });
+                }
+            }]
+        });
+};
+
+Template.enroll_account_dialog.events = {
+    
+    'submit form': function (event, tmpl) {
+        event.preventDefault();
+        enrollAccount(tmpl.find('.password').value)
+            .always(function () {
+                tmpl.$dialog.dialog('close');
+            });
+    }
+    
 };
 
 // ==================================== Login info ====================================

@@ -185,6 +185,24 @@ Template.movies_filter.moviesFilter = function () {
 
 // ==================================== Settings ====================================
 
+// ==================================== Notifications ====================================
+
+Template.notification_settings.events = {
+    
+    'change #emailNewMovies': function (event) {
+        Meteor.call('updateUserNotifications', {
+            newMovies: event.target.checked
+        });
+    }
+    
+};
+
+Template.notification_settings.notifyAbout = function () {
+    var user = Meteor.user();
+    
+    return user && user.notifyAbout || {};
+};
+
 Template.movies_synonyms_list.movies = function () {
     var movies = {},
         moviesArray = [];

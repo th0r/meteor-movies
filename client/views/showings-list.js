@@ -85,6 +85,7 @@ Template.showings_list.headers = function () {
 };
 
 Template.showings_list.events = {
+    
     'click .showing-list-header.sortable': function () {
         var sorting = Session.get('sorting', true),
             currentOrderIndex;
@@ -104,6 +105,7 @@ Template.showings_list.events = {
 
         Session.set('sorting', sorting, true);
     }
+    
 };
 
 Template.showings_list.withRatingHeaders = function () {
@@ -175,36 +177,61 @@ Template.showings_list.showings = function () {
     return moviesArray;
 };
 
+// ==================================== Movie name (drag/drop to create synonyms) ====================================
+
+function destroyDraggable($elem) {
+    $elem
+        .draggable('destroy')
+        .droppable('destroy');
+}
+
 Template.movie_name.rendered = function () {
     var self = this,
-        $movie = $(this.find('.movie'));
+        $movie = this.$movie = $(this.find('.movie'));
+    
+    this.dragHandlerBound = false;
+    this.dragHandlerBinder = Meteor.autorun(function () {
+        var user = Meteor.user(),
+            bindingNeeded = !!(user && user.admin);
 
-    $movie
-        .draggable({
-            addClasses: false,
-            axis: 'y',
-            containment: $movie.closest('.showings-list'),
-            cursor: 'move',
-            opacity: 0.5,
-            revert: true,
-            revertDuration: 300,
-            scope: 'movie-name'
-        })
-        .droppable({
-            hoverClass: 'drop-allowed',
-            addClasses: false,
-            scope: 'movie-name',
-            tolerance: 'pointer',
-            drop: function (event, ui) {
-                var originalName = self.data.movie,
-                    synonym = ui.draggable.data('movie');
+        if (bindingNeeded !== self.dragHandlerBound) {
+            self.dragHandlerBound = bindingNeeded;
+            if (bindingNeeded) {
+                $movie
+                    .draggable({
+                        addClasses: false,
+                        axis: 'y',
+                        containment: $movie.closest('.showings-list'),
+                        cursor: 'move',
+                        opacity: 0.5,
+                        revert: true,
+                        revertDuration: 300,
+                        scope: 'movie-name'
+                    })
+                    .droppable({
+                        hoverClass: 'drop-allowed',
+                        addClasses: false,
+                        scope: 'movie-name',
+                        tolerance: 'pointer',
+                        drop: function (event, ui) {
+                            var originalName = self.data.movie,
+                                synonym = ui.draggable.data('movie');
 
-                MovieSynonyms.insert({
-                    from: synonym,
-                    to: originalName
-                });
+                            MovieSynonyms.insert({
+                                from: synonym,
+                                to: originalName
+                            });
+                        }
+                    });
+            } else {
+                destroyDraggable($movie);
             }
-        });
+        }
+    });
+};
+
+Template.movie_name.destroyed = function () {
+    this.dragHandlerBinder.stop();
 };
 
 Template.movie_name.movieUrl = function () {
@@ -212,6 +239,8 @@ Template.movie_name.movieUrl = function () {
 
     return movie && movie.info ? movie.info.url : 'http://www.kinopoisk.ru/index.php?first=yes&kp_query=' + encodeURIComponent(this.movie);
 };
+
+// ==================================== Movie info ====================================
 
 Template.movie_info.movie = function () {
     var movie = Movies.findOne({title: this.movie});
@@ -225,9 +254,7 @@ Template.movie_info.movie = function () {
     }
 };
 
-Template.movie_rating.ratings = function () {
-    return formRatingArray(this.rating);
-};
+// ==================================== Movie rating ====================================
 
 Template.movie_info.events = {
 
@@ -259,6 +286,14 @@ Template.movie_info.events = {
     }
 
 };
+
+// ==================================== Movie info ratings ====================================
+
+Template.movie_rating.ratings = function () {
+    return formRatingArray(this.rating);
+};
+
+// ==================================== Showing times ====================================
 
 Template.showing_times.times = function () {
     var from = +App.convertMinuteToMoment(Session.get('showingsFrom', true)),

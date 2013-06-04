@@ -22,6 +22,20 @@
     </form>
 </template>
 
+<template name="enroll_account">
+{{# if enrollAccountToken }}
+    {{> enroll_account_dialog }}
+{{/ if }}
+</template>
+
+<template name="enroll_account_dialog">
+    <div class="enroll-account-dialog">
+        <form action="/" method="post">
+            <input class="password" type="password" placeholder="Введите пароль для вашего аккаунта"/>
+        </form>
+    </div>
+</template>
+
 <template name="login_email">
 {{ email }}
 </template>
