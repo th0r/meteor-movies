@@ -7,7 +7,6 @@ Template.admin_commands.rendered = function () {
 
 Template.admin_commands.events = {
     'click .refresh-showings': function () {
-        console.log(1);
         Meteor.call('refreshShowings', true);
     }
 };
