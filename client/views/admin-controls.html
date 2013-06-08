@@ -1,0 +1,42 @@
+<template name="admin_controls">
+    <div class="control control-commands">
+        <div class="control-title">Команды:</div>
+        <div class="control-container">
+            {{> admin_commands }}
+        </div>
+    </div>
+    <div class="control control-synonyms">
+        <div class="control-title">Синонимы:</div>
+        <div class="control-container">
+            {{> movies_synonyms_list }}
+        </div>
+    </div>
+</template>
+
+<template name="admin_commands">
+    <button class="refresh-showings" type="button">Обновить сеансы</button>
+</template>
+
+<template name="movies_synonyms_list">
+    {{#each movies}}
+    <div class="movies">
+        {{>movie_synonyms}}
+    </div>
+    {{else}}
+    <div class="movies no-synonyms">Нет синонимов</div>
+    {{/each}}
+</template>
+
+<template name="movie_synonyms">
+    <div class="movie-original">{{original}}</div>
+    <div class="movie-synonyms">
+        {{#each docs}}
+            <div class="movie-synonym">
+                <span class="name">{{from}}</span>
+                <span class="remove">
+                    <span class="remove-button icon-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-close"></span></span>
+                </span>
+            </div>
+        {{/each}}
+    </div>
+</template>

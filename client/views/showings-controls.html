@@ -4,27 +4,30 @@
         <ul>
             <li><a href="#filter"><span>Фильтрация</span></a></li>
             <li><a href="#settings"><span>Настройки</span></a></li>
+            {{# if isAdmin }}
+                <li><a href="#admin"><span>Управление</span></a></li>
+            {{/ if }}
         </ul>
 
         <div id="filter">
             <div class="control control-cinemas">
                 <div class="control-title">Кинотеатры:</div>
                 <div class="control-container">
-                    {{>cinemas_list}}
+                    {{> cinemas_list }}
                 </div>
             </div>
 
             <div class="control control-time">
                 <div class="control-title">Время:</div>
                 <div class="control-container">
-                    {{>time_slider}}
+                    {{> time_slider }}
                 </div>
             </div>
 
             <div class="control control-movies-filter">
                 <div class="control-title">Фильм:</div>
                 <div class="control-container">
-                    {{>movies_filter}}
+                    {{> movies_filter }}
                 </div>
             </div>
         </div>
@@ -34,6 +37,14 @@
                 {{> settings }}
             </div>
         </div>
+
+        {{# if isAdmin }}
+            <div id="admin">
+                <div class="control control-admin">
+                    {{> admin_controls }}
+                </div>
+            </div>
+        {{/ if }}
 
     </div>
 
@@ -78,7 +89,7 @@
         {{> settings_for_unregistered_user }}
     {{/ if }}
 </template>
-        
+
 <template name="settings_for_registered_user">
     <div class="control control-logout">
         <div class="control-title">Аккаунт:</div>
@@ -92,14 +103,6 @@
             {{> notification_settings }}
         </div>
     </div>
-    {{# if currentUser.admin }}
-        <div class="control control-synonyms">
-            <div class="control-title">Синонимы:</div>
-            <div class="control-container">
-                {{> movies_synonyms_list }}
-            </div>
-        </div>
-    {{/ if }}
 </template>
 
 <template name="settings_for_unregistered_user">
@@ -113,28 +116,4 @@
         <input id="emailNewMovies" type="checkbox"{{# if notifyAbout.newMovies }} checked{{/ if }}>
         Посылать email о новых фильмах
     </label>
-</template>
-
-<template name="movies_synonyms_list">
-    {{#each movies}}
-    <div class="movies">
-        {{>movie_synonyms}}
-    </div>
-    {{else}}
-    <div class="movies no-synonyms">Нет синонимов</div>
-    {{/each}}
-</template>
-
-<template name="movie_synonyms">
-    <div class="movie-original">{{original}}</div>
-    <div class="movie-synonyms">
-        {{#each docs}}
-            <div class="movie-synonym">
-                <span class="name">{{from}}</span>
-                <span class="remove">
-                    <span class="remove-button icon-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-close"></span></span>
-                </span>
-            </div>
-        {{/each}}
-    </div>
 </template>

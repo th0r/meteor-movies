@@ -1,3 +1,11 @@
+// ==================================== Handlebars global helpers ====================================
+
+Handlebars.registerHelper('isAdmin', function () {
+    var user = Meteor.user();
+
+    return !!(user && user.admin);
+});
+
 // ==================================== Login/register form ====================================
 
 var ENROLL_ACCOUNT_TOKEN = Accounts._enrollAccountToken;
@@ -26,7 +34,7 @@ function makeAction(action, form) {
 
 function login(info) {
     var dfd = new Du.Deferred();
-    
+
     Meteor.loginWithPassword(info.email, info.password, function (error) {
         if (error) {
             showError(error);
@@ -35,7 +43,7 @@ function login(info) {
             dfd.resolve();
         }
     });
-    
+
     return dfd;
 }
 
@@ -79,20 +87,20 @@ Template.login_form.rendered = function () {
 };
 
 Template.login_form.events = {
-    
+
     'submit': function (event, tmpl) {
         event.preventDefault();
         makeAction('login', tmpl.find('.login-form'));
     },
-    
+
     'click button.login': function (event, tmpl) {
         makeAction('login', tmpl.find('.login-form'));
     },
-    
+
     'click button.register': function (event, tmpl) {
         makeAction('register', tmpl.find('.login-form'));
     }
-        
+
 };
 
 Template.login_form.formError = function () {
@@ -114,7 +122,7 @@ function enrollAccount(password) {
             dfd.resolve();
         }
     });
-    
+
     return dfd;
 }
 
@@ -132,7 +140,7 @@ Template.enroll_account_dialog.rendered = function () {
                 text: 'Установить пароль',
                 click: function () {
                     var $dialog = $(this);
-                    
+
                     enrollAccount($dialog.find('.password').val())
                         .always(function () {
                             $dialog.dialog('close');
@@ -143,7 +151,7 @@ Template.enroll_account_dialog.rendered = function () {
 };
 
 Template.enroll_account_dialog.events = {
-    
+
     'submit form': function (event, tmpl) {
         event.preventDefault();
         enrollAccount(tmpl.find('.password').value)
@@ -151,23 +159,23 @@ Template.enroll_account_dialog.events = {
                 tmpl.$dialog.dialog('close');
             });
     }
-    
+
 };
 
 // ==================================== Login info ====================================
 
 Template.login_email.email = function () {
     var currentUser = Meteor.user();
-    
+
     return currentUser ? currentUser.emails[0].address : 'не залогинен';
 };
 
 // ==================================== Logout ====================================
 
 Template.logout_button.events = {
-    
+
     'click': function () {
         logout();
     }
-    
+
 };

@@ -1,8 +1,24 @@
 // ==================================== Showings controls ====================================
 
 Template.showings_controls.rendered = function () {
-    $(this.find('.control-tabs'))
-        .tabs();
+    var self = this,
+        $tabs = this.$tabs;
+
+    if ($tabs) {
+        $tabs.tabs('destroy');
+    } else {
+        $tabs = this.$tabs = $(this.find('.control-tabs'));
+    }
+    $tabs.tabs({
+        create: function () {
+            if (self.activeTab) {
+                $tabs.tabs('option', 'active', self.activeTab);
+            }
+        },
+        activate: function () {
+            self.activeTab = $tabs.tabs('option', 'active');
+        }
+    });
 };
 
 // ==================================== Cinemas List ====================================
@@ -165,7 +181,7 @@ var setMovieFilter = function (value) {
     setMovieFilterDelayed = Du.debounce(setMovieFilter, 200);
 
 Template.movies_filter.events = {
-    
+
     'input, keyup #moviesFilter': function (event, tmpl) {
         if (event.type === 'keyup' && event.keyCode === 27) {
             clearMovieFilter(tmpl);
@@ -173,7 +189,7 @@ Template.movies_filter.events = {
             setMovieFilterDelayed(event.target.value);
         }
     },
-    
+
     'click .clear-filter': function (event, tmpl) {
         clearMovieFilter(tmpl);
     }
@@ -188,45 +204,17 @@ Template.movies_filter.moviesFilter = function () {
 // ==================================== Notifications ====================================
 
 Template.notification_settings.events = {
-    
+
     'change #emailNewMovies': function (event) {
         Meteor.call('updateUserNotifications', {
             newMovies: event.target.checked
         });
     }
-    
+
 };
 
 Template.notification_settings.notifyAbout = function () {
     var user = Meteor.user();
-    
+
     return user && user.notifyAbout || {};
-};
-
-Template.movies_synonyms_list.movies = function () {
-    var movies = {},
-        moviesArray = [];
-
-    MovieSynonyms.find({}).fetch().forEach(function (doc) {
-        var synonyms = movies[doc.to] = movies[doc.to] || [];
-
-        synonyms.push(doc);
-    });
-
-    _.each(movies, function (docs, original) {
-        moviesArray.push({
-            original: original,
-            docs: docs
-        });
-    });
-
-    return moviesArray;
-};
-
-Template.movie_synonyms.events = {
-    
-    'click .remove': function () {
-        MovieSynonyms.remove(this._id);
-    }
-    
 };
