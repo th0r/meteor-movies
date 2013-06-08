@@ -2,28 +2,25 @@
 
 Template.showings_controls.rendered = function () {
     var self = this,
+        activeTab,
         $tabs = this.$tabs;
 
     if ($tabs) {
-        $tabs.tabs('destroy');
-    } else {
-        $tabs = this.$tabs = $(this.find('.control-tabs'));
-    }
-    $tabs.tabs({
-        create: function () {
-            if (self.activeTab) {
-                $tabs.tabs('option', 'active', self.activeTab);
-            }
-        },
-        activate: function () {
-            self.activeTab = $tabs.tabs('option', 'active');
+        activeTab = self.activeTab;
+        $tabs.tabs('refresh');
+        if (activeTab) {
+            $tabs.tabs('option', 'active', activeTab);
         }
-    });
+    } else {
+        $tabs = this.$tabs = $(this.find('.control-tabs')).tabs({
+            activate: function () {
+                self.activeTab = $tabs.tabs('option', 'active');
+            }
+        });
+    }
 };
 
 // ==================================== Cinemas List ====================================
-
-Template.cinemas_list.preserve(['.cinemas']);
 
 Template.cinemas_list.created = function () {
     var self = this;

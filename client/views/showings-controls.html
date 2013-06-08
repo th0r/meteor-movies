@@ -1,62 +1,79 @@
 <template name="showings_controls">
 
     <div class="control-tabs">
-        <ul>
-            <li><a href="#filter"><span>Фильтрация</span></a></li>
-            <li><a href="#settings"><span>Настройки</span></a></li>
-            {{# if isAdmin }}
-                <li><a href="#admin"><span>Управление</span></a></li>
-            {{/ if }}
-        </ul>
+        {{> control_tabs }}
 
-        <div id="filter">
-            <div class="control control-cinemas">
-                <div class="control-title">Кинотеатры:</div>
-                <div class="control-container">
-                    {{> cinemas_list }}
-                </div>
-            </div>
-
-            <div class="control control-time">
-                <div class="control-title">Время:</div>
-                <div class="control-container">
-                    {{> time_slider }}
-                </div>
-            </div>
-
-            <div class="control control-movies-filter">
-                <div class="control-title">Фильм:</div>
-                <div class="control-container">
-                    {{> movies_filter }}
-                </div>
-            </div>
-        </div>
-
-        <div id="settings">
-            <div class="control control-settings">
-                {{> settings }}
-            </div>
-        </div>
-
-        {{# if isAdmin }}
-            <div id="admin">
-                <div class="control control-admin">
-                    {{> admin_controls }}
-                </div>
-            </div>
-        {{/ if }}
-
+        {{> filter_controls_panel }}
+        {{> settings_controls_panel }}
+        {{> admin_controls_panel }}
     </div>
 
 </template>
 
+<template name="control_tabs">
+    <ul>
+        <li><a href="#filter"><span>Фильтрация</span></a></li>
+        <li><a href="#settings"><span>Настройки</span></a></li>
+        {{# if isAdmin }}
+            <li><a href="#admin"><span>Управление</span></a></li>
+        {{/ if }}
+    </ul>
+</template>
+
+<template name="filter_controls_panel">
+    <div id="filter">
+        <div class="control control-cinemas">
+            <div class="control-title">Кинотеатры:</div>
+            <div class="control-container">
+                {{> cinemas_list }}
+            </div>
+        </div>
+
+        <div class="control control-time">
+            <div class="control-title">Время:</div>
+            <div class="control-container">
+                {{> time_slider }}
+            </div>
+        </div>
+
+        <div class="control control-movies-filter">
+            <div class="control-title">Фильм:</div>
+            <div class="control-container">
+                {{> movies_filter }}
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="settings_controls_panel">
+    <div id="settings">
+        <div class="control control-settings">
+            {{# if currentUser }}
+                {{> settings_for_registered_user }}
+            {{ else }}
+                {{> settings_for_unregistered_user }}
+            {{/ if }}
+        </div>
+    </div>
+</template>
+
+<template name="admin_controls_panel">
+    {{# if isAdmin }}
+        <div id="admin">
+            <div class="control control-admin">
+                {{> admin_controls }}
+            </div>
+        </div>
+    {{/ if }}
+</template>
+
 <template name="cinemas_list">
     <div class="cinemas">
-        {{#each cinemas}}
-            {{>cinema}}
-        {{else}}
+        {{# each cinemas }}
+            {{> cinema }}
+        {{ else }}
             <span>Список кинотеатров загружается...</span>
-        {{/each}}
+        {{/ each }}
     </div>
 </template>
 
@@ -67,27 +84,17 @@
 </template>
 
 <template name="time_slider">
-    {{#constant}}
-        <div class="control-time-slider"></div>
-        <div class="control-time-text"></div>
-        <div class="control-time-auto-wrap">
-            <input id="control-time-auto" class="control-time-auto" type="checkbox">
-                <label for="control-time-auto">Не показывать прошедшие сеансы</label>
-            </input>
-        </div>
-    {{/constant}}
+    <div class="control-time-slider"></div>
+    <div class="control-time-text"></div>
+    <div class="control-time-auto-wrap">
+        <input id="control-time-auto" class="control-time-auto" type="checkbox">
+            <label for="control-time-auto">Не показывать прошедшие сеансы</label>
+        </input>
+    </div>
 </template>
 
 <template name="movies_filter">
     <input id="moviesFilter" type="text" placeholder="Фильтр по названию" value="{{ moviesFilter }}"><span class="clear-filter icon-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-close"></span></span>
-</template>
-
-<template name="settings">
-    {{# if currentUser }}
-        {{> settings_for_registered_user }}
-    {{ else }}
-        {{> settings_for_unregistered_user }}
-    {{/ if }}
 </template>
 
 <template name="settings_for_registered_user">
