@@ -1,86 +1,86 @@
 <template name="showings_list">
-    {{#if hasShowings}}
+    {{# if hasShowings }}
         <table class="showings-list">
             <tr>
-                {{#each headers}}
-                    <th class="showing-list-header{{#if sortId}} sortable{{/if}}">
-                        {{#if name}}<span>{{name}}</span>{{/if}}
-                        {{>sort_icon}}
+                {{# each headers }}
+                    <th class="showing-list-header{{# if sortId }} sortable{{/ if }}">
+                        {{# if name }}<span>{{ name }}</span>{{/ if }}
+                        {{> sort_icon }}
                     </th>
-                {{/each}}
+                {{/ each }}
             </tr>
-            {{#each showings}}
+            {{# each showings }}
                 <tr>
-                    <td class="new">{{#if isNew}}<i class="icon-new" title="Новый"></i>{{/if}}</td>
-                    <td class="showing">{{>movie_name}}</td>
-                    {{#if withRatingHeaders}}
-                        {{#each rating}}
-                            <td class="rating">{{>movie_rating_value}}</td>
-                        {{/each}}
-                    {{/if}}
-                    <td class="showing-sessions">{{>showing_times}}</td>
+                    <td class="new">{{# if isNew }}<i class="icon-new" title="Новый"></i>{{/ if }}</td>
+                    <td class="showing">{{> movie_name }}</td>
+                    {{# if withRatingHeaders }}
+                        {{# each rating }}
+                            <td class="rating">{{> movie_rating_value }}</td>
+                        {{/ each }}
+                    {{/ if }}
+                    <td class="showing-sessions">{{> showing_times }}</td>
                 </tr>
-            {{else}}
+            {{ else }}
                 <tr>
                     <td class="no-filtered" colspan="{{ headers.length }}">Нет подходящих сеансов</td>
                 </tr>
-            {{/each}}
+            {{/ each }}
         </table>
-    {{else}}
+    {{ else }}
         <div class="showing no-showing">Нет сеансов</div>
-    {{/if}}
+    {{/ if }}
 </template>
 
 <template name="sort_icon">
-    {{#with sortInfo}}
-        <span class="sort-icon ui-icon {{iconClass}}"></span>
-    {{/with}}
+    {{# with sortInfo }}
+        <span class="sort-icon ui-icon {{ iconClass }}"></span>
+    {{/ with }}
 </template>
 
 <template name="movie_name">
-    <a class="movie" data-movie="{{movie}}" href="{{movieUrl}}" target="_blank">{{movie}}</a>{{>movie_info}}
+    <a class="movie" data-movie="{{ movie }}" href="{{ movieUrl }}" target="_blank">{{ movie }}</a>{{> movie_info }}
 </template>
 
 <template name="movie_info">
-    {{#with movie}}
+    {{# with movie }}
         <i class="movie-info-icon ui-icon ui-icon-info" title="{{ dateInfoUpdatedText }}">
-            {{>movie_info_content}}
+            {{> movie_info_content }}
         </i>
-    {{/with}}
+    {{/ with }}
 </template>
 
 <template name="movie_info_content">
-    <div class="movie-info" title="{{title}}">
-        {{#with info}}
+    <div class="movie-info" title="{{ title }}">
+        {{# with info }}
         <div class="col-left">
-            {{#if poster}}
+            {{# if poster }}
                 <a class="poster-link" href="{{ url }}" target="_blank"><img class="poster" src="{{ poster }}"/></a>
-            {{/if}}
-            <div class="rating">{{>movie_rating}}</div>
+            {{/ if }}
+            <div class="rating">{{> movie_rating }}</div>
         </div>
         <div class="col-right">
             <div class="description">{{{ description }}}</div>
         </div>
-        {{/with}}
+        {{/ with }}
     </div>
 </template>
 
 <template name="movie_rating">
-    {{#each ratings}}
-    <div>{{name}}: {{>movie_rating_value}}</div>
-    {{/each}}
+    {{# each ratings }}
+    <div>{{ name }}: {{> movie_rating_value }}</div>
+    {{/ each }}
 </template>
 
 <template name="movie_rating_value">
-    <span class="rating-group-{{ratingGroup}}">{{#if rating}}{{rating}}{{else}}-{{/if}}</span>
+    <span class="rating-group-{{ ratingGroup }}">{{# if rating }}{{ rating }}{{ else }}-{{/ if }}</span>
 </template>
 
 <template name="showing_times">
     <span class="sessions">
-        {{#each times}}
-        <span class="session cinema-{{cinemaId}}{{#if is3D}} is3D{{/if}}">{{time}}</span>&nbsp;
-        {{else}}
+        {{# each times }}
+        <span class="session cinema-{{ cinemaId }}{{# if is3D }} is3D{{/ if }}">{{ time }}</span>&nbsp;
+        {{ else }}
         <span class="session no-session">Нет сеансов в указанное время</span>
-        {{/each}}
+        {{/ each }}
     </span>
 </template>

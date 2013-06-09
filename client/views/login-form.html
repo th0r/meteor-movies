@@ -3,12 +3,12 @@
         <div class="login-inputs clearfix">
             <div class="login-col">
                 <div class="login-input-wrapper">
-                    <input class="login-input" name="email" placeholder="Email" type="email" required{{# if loggingIn}} disabled{{/ if }}/>
+                    <input class="login-input" name="email" placeholder="Email" type="email" required{{# if loggingIn }} disabled{{/ if }}/>
                 </div>
             </div>
             <div class="login-col">
                 <div class="login-input-wrapper">
-                    <input class="login-input" name="password" placeholder="Пароль" type="password" required{{# if loggingIn}} disabled{{/ if }}/>
+                    <input class="login-input" name="password" placeholder="Пароль" type="password" required{{# if loggingIn }} disabled{{/ if }}/>
                 </div>
             </div>
         </div>
@@ -16,8 +16,8 @@
         <div class="login-form-error">{{ formError }}</div>
         {{/ if }}
         <div class="login-buttons">
-            <button class="login"{{# if loggingIn}} disabled{{/ if }}>Войти</button>
-            <button class="register"{{# if loggingIn}} disabled{{/ if }}>Зарегистрироваться</button>
+            <button class="login"{{# if loggingIn }} disabled{{/ if }}>Войти</button>
+            <button class="register"{{# if loggingIn }} disabled{{/ if }}>Зарегистрироваться</button>
         </div>
     </form>
 </template>

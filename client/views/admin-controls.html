@@ -18,25 +18,25 @@
 </template>
 
 <template name="movies_synonyms_list">
-    {{#each movies}}
+    {{# each movies }}
     <div class="movies">
-        {{>movie_synonyms}}
+        {{> movie_synonyms }}
     </div>
-    {{else}}
+    {{ else }}
     <div class="movies no-synonyms">Нет синонимов</div>
-    {{/each}}
+    {{/ each }}
 </template>
 
 <template name="movie_synonyms">
-    <div class="movie-original">{{original}}</div>
+    <div class="movie-original">{{ original }}</div>
     <div class="movie-synonyms">
-        {{#each docs}}
+        {{# each docs }}
             <div class="movie-synonym">
-                <span class="name">{{from}}</span>
+                <span class="name">{{ from }}</span>
                 <span class="remove">
                     <span class="remove-button icon-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-close"></span></span>
                 </span>
             </div>
-        {{/each}}
+        {{/ each }}
     </div>
 </template>
