@@ -7,6 +7,11 @@ if (ADMIN_EMAIL) {
 
         // Admin is already created
         if (user && user.admin) {
+            if (!user.emails[0].verified) {
+                // Sending enrollment email, because admin have's verified it's email yet
+                Accounts.sendEnrollmentEmail(user);
+            }
+            
             return;
         }
         
