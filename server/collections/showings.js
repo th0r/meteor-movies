@@ -1,8 +1,16 @@
 var Fiber = Npm.require('fibers'),
     SHOWINGS_UPDATE_INTERVAL = 15 * 60 * 1000;
 
-Meteor.publish('showings', function () {
-    return Showings.find({});
+Meteor.publish('showings', function (showingsDate) {
+    check(showingsDate, Date);
+    showingsDate = moment(showingsDate).startOf('day');
+
+    return Showings.find({
+        'sessions.time': {
+            $gte: moment(showingsDate).minutes(App.DAY_START_MINUTES).toDate(),
+            $lte: moment(showingsDate).minutes(App.DAY_END_MINUTES).toDate()
+        }
+    });
 });
 
 Meteor.methods({

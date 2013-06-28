@@ -1,3 +1,9 @@
+var SHOWINGS_DATE_UPDATE_INTERVAL = 30 * 1000;
+
+function updateShowingsDate() {
+    Session.set('currentShowingsDate', App.getShowingsFetchDate().toDate());
+}
+
 Meteor.startup(function () {
 
     var TMPL_DEBUG = false,
@@ -31,6 +37,12 @@ Meteor.startup(function () {
     _.each(SESSION_DEFAULTS_WITH_STORAGE, function (value, key) {
         Session.setDefault(key, value, true);
     });
+    
+    // Setting current showings date
+    updateShowingsDate();
+    
+    // Setting interval to update current showings date
+    setInterval(updateShowingsDate, SHOWINGS_DATE_UPDATE_INTERVAL);
 
     // Templates rendering watcher
     if (TMPL_DEBUG) {
