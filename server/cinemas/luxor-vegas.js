@@ -6,7 +6,8 @@ CinemasManager.addCinema('luxor-vegas', {
     shortName: 'Vegas',
 
     showingsUrl: 'http://www.luxorfilm.ru/cinema/vegas/',
-    parseShowingsPage: function ($html) {
+    
+    parseShowings: function ($html) {
         return $html.find('.cinema_time_info').map(function () {
             var is3D = false,
                 movieName = this.find('h3 a').text()

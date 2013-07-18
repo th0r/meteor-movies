@@ -59,7 +59,7 @@ Meteor.startup(function () {
         CinemasManager
             [method](function (cinemaId, error, showings) {
                 if (error) {
-                    console.log('Error while fetching showings for "' + cinemaId + '" cinema');
+                    console.log(error);
                 } else {
                     console.log('Updating showings for "' + cinemaId + '" cinema');
                     updateShowings(cinemaId, showings, synonyms);

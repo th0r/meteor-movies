@@ -3,7 +3,7 @@ Package.describe({
 });
 
 Npm.depends({
-    'moment': '2.0.0'
+    'moment': '2.1.0'
 });
 
 Package.on_use(function (api) {

@@ -1,30 +1,27 @@
 var Fibers = Npm.require('fibers'),
+    REQUESTS_TIMEOUT = 30 * 1000,
     SHOWINGS_OVERDUE_HOURS = 4;
 
 CinemasManager = {
 
     cinemas: {},
 
-    parsers: {
-        'html': function (id, cinema, dfd) {
-            Meteor.http.get(_.result(cinema, 'showingsUrl'), function (error, result) {
+    grabbers: {
+        'html': function (dfd) {
+            Meteor.http.get(_.result(this, 'showingsUrl'), { timeout: REQUESTS_TIMEOUT }, function (error, result) {
                 if (error) {
-                    dfd.reject('Error while downloading web page', error);
+                    dfd.reject(error);
                 } else {
-                    try {
-                        dfd.resolve(cinema.parseShowingsPage($(result.content)));
-                    } catch (e) {
-                        dfd.reject('Error while parsing showings for cinema with id "' + id + '"', e);
-                    }
+                    dfd.resolve($(result.content));
                 }
             });
         },
-        'json': function (id, cinema, dfd) {
-            Meteor.http.get(_.result(cinema, 'showingsUrl'), function (error, result) {
+        'json': function (dfd) {
+            Meteor.http.get(_.result(this, 'showingsUrl'), { timeout: REQUESTS_TIMEOUT }, function (error, result) {
                 if (error || !result.data) {
-                    dfd.reject('Error while parsing showings for cinema with id "' + id + '"', error);
+                    dfd.reject(error);
                 } else {
-                    dfd.resolve(cinema.parseShowingsPage(result.data));
+                    dfd.resolve(result.data);
                 }
             });
         }
@@ -32,6 +29,7 @@ CinemasManager = {
 
     addCinema: function (id, cinema) {
         this.cinemas[id] = cinema;
+        cinema.id = id;
 
         // Filling `Cinemas` collection
         Meteor.startup(function () {
@@ -113,22 +111,34 @@ CinemasManager = {
 
     fetchShowings: function (id) {
         var dfd = new Du.Deferred(),
+            grabberDfd = new Du.Deferred(),
             cinema = this.cinemas[id],
             responseType,
-            parser;
+            grabber;
 
         if (cinema) {
             responseType = cinema.responseType || 'html';
-            parser = this.parsers[responseType];
-            if (parser) {
-                parser(id, cinema, dfd);
-                dfd.done(function () {
-                    Fibers(function () {
-                        Cinemas.update({id: id}, {$set: {fetchDate: new Date()}});
-                    }).run();
-                });
+            grabber = cinema.grabber || this.grabbers[responseType];
+            if (grabber) {
+                grabber.call(cinema, grabberDfd);
+                grabberDfd
+                    .pipe(function (result) {
+                        // Successful grabbing
+                        // Parsing showings...
+                        return Du.when([cinema.parseShowings(result)]);
+                    })
+                    .then(function (showings) {
+                        // Sucessful parsing
+                        Fibers(function () {
+                            Cinemas.update({id: id}, {$set: {fetchDate: new Date()}});
+                        }).run();
+                        dfd.resolve(showings);
+                    }, function (error) {
+                        // Error while grabbing or parsing
+                        dfd.reject('Error while grabbing/parsing showings for cinema with id "' + id + '": ' + error);
+                    });
             } else {
-                dfd.reject('There is no parser for response type "' + responseType + '"');
+                dfd.reject('There is no grabber for cinema with id "' + id + '"');
             }
         } else {
             dfd.reject('There is no registered cinema with id "' + id + '"');

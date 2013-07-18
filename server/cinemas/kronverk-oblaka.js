@@ -5,7 +5,8 @@ CinemasManager.addCinema('kronverk-oblaka', {
 
     showingsUrl: 'http://www.kronverkcinema.ru/schedule/city_id_1_delta_days_0.json?_=1365778365703',
     responseType: 'json',
-    parseShowingsPage: function (data) {
+    
+    parseShowings: function (data) {
         var movies = {};
 
         data.movies
