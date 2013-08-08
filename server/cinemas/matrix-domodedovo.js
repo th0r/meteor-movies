@@ -64,7 +64,9 @@ CinemasManager.addCinema('matrix-domodedovo', {
     },
 
     parseShowings: function (showingsScriptSrc) {
-        var sandbox = {};
+        var sandbox = {},
+            showingsDate = App.getShowingsFetchDate(),
+            showings = [];
         
         showingsScriptSrc = showingsScriptSrc
             .split(/\n+/)
@@ -74,8 +76,7 @@ CinemasManager.addCinema('matrix-domodedovo', {
             .join('\n');
         
         vm.runInNewContext(showingsScriptSrc, sandbox);
-        
-        return sandbox.array_films.map(function (movie) {
+        sandbox.array_films.forEach(function (movie) {
             var is3D = false,
                 movieName = movie.Name.replace(SESSION_TYPE, function (match, type) {
                     is3D = (type === '3D');
@@ -86,19 +87,26 @@ CinemasManager.addCinema('matrix-domodedovo', {
                 sessions = [];
 
             for (var day in sessionsByDay) {
-                sessions.push.apply(sessions, sessionsByDay[day]);
-            }
-
-            return {
-                movie: movieName,
-                sessions: sessions.map(function (session) {
-                    return {
-                        time: moment(session.ShowDateTime, 'DD/MM/YYYY HH:mm:dd').toDate(),
-                        is3D: is3D
+                sessionsByDay[day].forEach(function (session) {
+                    if (moment(session.ShowDate, 'DD.MM.YYYY').isSame(showingsDate)) {
+                        // This showing is for current showings day
+                        sessions.push({
+                            time: moment(session.ShowDateTime, 'DD/MM/YYYY HH:mm:dd').toDate(),
+                            is3D: is3D
+                        });
                     }
-                })
+                });
+            }
+            
+            if (sessions.length) {
+                showings.push({
+                    movie: movieName,
+                    sessions: sessions
+                });
             }
         });
+
+        return showings;
     }
 
 });
