@@ -52,7 +52,7 @@ stop web-apps/meteor-movies || true
 echo "\nUpdating Meteor Movies bundle..."
 rm -rf ${DEPLOY_PATH}
 mv ${BUILD_DIR}/bundle ${DEPLOY_PATH}
-cd ${DEPLOY_PATH}/server
+cd ${DEPLOY_PATH}/programs/server
 npm uninstall fibers
 npm install fibers
 
