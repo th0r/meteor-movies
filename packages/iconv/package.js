@@ -7,5 +7,6 @@ Npm.depends({
 });
 
 Package.on_use(function (api) {
+    api.export('iconv', 'server');
     api.add_files('iconv-lite.js', 'server');
 });

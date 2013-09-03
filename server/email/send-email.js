@@ -1,24 +1,19 @@
 var FROM = App.APP_EMAIL,
+    EMAIL_TMPLS_DIR = 'emails',
     SUBJECT_TMPL_SUFFIX = '-subject',
-    BODY_TMPL_SUFFIX = '-body',
-    templates = Handlebars.templates;
-
-function getTemplate(tmplName) {
-    var tmplFile = path.resolve(TMPL_DIR, tmplName + TMPL_EXT),
-        tmpl = fs.readFileSync(tmplFile, 'utf8');
-    
-    return Handlebars.compile(tmpl);
-}
+    BODY_TMPL_SUFFIX = '-body';
 
 App.sendEmail = function (to, messageTmplName, tmplData) {
+    var tmplPrefix = EMAIL_TMPLS_DIR + '/' + messageTmplName;
+    
     if (!_.isArray(to)) {
         to = [to];
     }
     try {
         var message = {
             from: FROM,
-            subject: templates[messageTmplName + SUBJECT_TMPL_SUFFIX](tmplData),
-            html: templates[messageTmplName + BODY_TMPL_SUFFIX](tmplData)
+            subject: Templates.render(tmplPrefix + SUBJECT_TMPL_SUFFIX, tmplData),
+            html: Templates.render(tmplPrefix + BODY_TMPL_SUFFIX, tmplData)
         };
 
         to.forEach(function (to) {

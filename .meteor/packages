@@ -3,10 +3,17 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
+standard-app-packages
 insecure
 preserve-inputs
 http
-jquery
 email
 accounts-password
 appcache
+cheerio
+iconv
+moment
+session-storage
+request
+image-proxy
+server-templates

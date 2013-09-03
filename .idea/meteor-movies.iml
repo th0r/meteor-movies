@@ -3,11 +3,17 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.meteor/local" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/cheerio/.npm" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/handlebars-server/.npm" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/iconv/.build" />
       <excludeFolder url="file://$MODULE_DIR$/packages/iconv/.npm" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/jsdom/.npm" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/image-proxy/.build" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/image-proxy/.npm" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/moment/.build" />
       <excludeFolder url="file://$MODULE_DIR$/packages/moment/.npm" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/request/.build" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/request/.npm" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/server-templates/.build" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/server-templates/.npm" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/session-storage/.build" />
       <excludeFolder url="file://$MODULE_DIR$/packages/session-storage/.npm" />
     </content>
     <orderEntry type="inheritedJdk" />

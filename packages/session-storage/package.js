@@ -10,8 +10,9 @@ Npm.depends({
 
 Package.on_use(function (api) {
     
-    api.add_files('.npm/node_modules/json3/lib/json3.js', 'client');
-    api.add_files('.npm/node_modules/store/store.js', 'client');
+    api.use('session');
+    api.add_files('.npm/package/node_modules/json3/lib/json3.js', 'client');
+    api.add_files('.npm/package/node_modules/store/store.js', 'client');
     api.add_files('session-storage.js', 'client');
     
 });

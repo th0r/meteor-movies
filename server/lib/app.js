@@ -4,3 +4,6 @@ App = {
 };
 
 Accounts.emailTemplates.from = App.APP_EMAIL;
+
+// Initing server-side templates
+Templates.init(Assets);
