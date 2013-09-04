@@ -8,7 +8,7 @@ CinemasManager = {
 
     grabbers: {
         'html': function (dfd) {
-            Meteor.http.get(_.result(this, 'showingsUrl'), { timeout: REQUESTS_TIMEOUT }, function (error, result) {
+            HTTP.get(_.result(this, 'showingsUrl'), { timeout: REQUESTS_TIMEOUT }, function (error, result) {
                 if (error) {
                     dfd.reject(error);
                 } else {
@@ -17,7 +17,7 @@ CinemasManager = {
             });
         },
         'json': function (dfd) {
-            Meteor.http.get(_.result(this, 'showingsUrl'), { timeout: REQUESTS_TIMEOUT }, function (error, result) {
+            HTTP.get(_.result(this, 'showingsUrl'), { timeout: REQUESTS_TIMEOUT }, function (error, result) {
                 if (error || !result.data) {
                     dfd.reject(error);
                 } else {

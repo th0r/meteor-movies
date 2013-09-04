@@ -16,7 +16,7 @@ CinemasManager.addCinema('matrix-domodedovo', {
     grabber: function (dfd) {
         var self = this;
         
-        Meteor.http.get(this.showingsPageUrl, { timeout: REQUESTS_TIMEOUT }, function (error, result) {
+        HTTP.get(this.showingsPageUrl, { timeout: REQUESTS_TIMEOUT }, function (error, result) {
             var phpSessionId,
                 showingsDate;
 
@@ -35,7 +35,7 @@ CinemasManager.addCinema('matrix-domodedovo', {
                 if (phpSessionId) {
                     showingsDate = App.getShowingsFetchDate();
 
-                    Meteor.http.get(self.showingsDataUrl, {
+                    HTTP.get(self.showingsDataUrl, {
                         timeout: REQUESTS_TIMEOUT,
                         params: {
                             type: 'showtheafilms',
