@@ -3,20 +3,25 @@ CinemasManager.addCinema('kronverk-oblaka', {
     name: 'Кронверк Синема Облака',
     shortName: 'Облака',
 
-    showingsUrl: 'http://www.kronverkcinema.ru/schedule/city_id_1_delta_days_0.json?_=1365778365703',
-    responseType: 'json',
+    showingsUrl: 'http://www.kronverkcinema.ru/cinemas/',
+    requestParams: {
+        headers: {
+            'Host': 'www.kronverkcinema.ru',
+            'Cookie': 'city=1;kinoCinemaId=182'
+        }
+    },
+    responseType: 'html',
     
-    parseShowings: function (data) {
-        var movies = {};
+    parseShowings: function ($html) {
+        return $html.find('.cinemas .item').map(function () {
+            var movieName = this.find('.name').text().trim();
 
-        data.movies
-            .forEach(function (movie) {
-                movie.sessions.forEach(function (session) {
-                    // Расписание идет для всех кинотеатров. Нам нужно только для нашего.
-                    if (session.cinema_id === 58) {
-                        var movieName = movie.name.trim(),
-                            sessions = movies[movieName] = movies[movieName] || [],
-                            time = session.time.split(':'),
+            return {
+                movie: movieName,
+                sessions: this.find('.date.active .session-time.hide320')
+                    .map(function () {
+                        var time = this.find('a')[0].children[0].data.trim().split(':'),
+                            is3D = !!this.find('.marker.marker-3d').length,
                             hours = +time[0],
                             sessionDate = moment().startOf('day').add({
                                 days: (hours < 4) ? 1 : 0,
@@ -24,24 +29,13 @@ CinemasManager.addCinema('kronverk-oblaka', {
                                 minutes: +time[1]
                             }).toDate();
 
-                        sessions.push({
+                        return {
                             time: sessionDate,
-                            is3D: (movie.type === '3D')
-                        });
-                    }
-                });
-            });
-
-        // Конвертируем в нужный нам формат
-        var moviesArray = [];
-        _.each(movies, function (sessions, movie) {
-            moviesArray.push({
-                movie: movie,
-                sessions: _.sortBy(sessions, 'time')
-            });
+                            is3D: is3D
+                        };
+                    })
+            }
         });
-
-        return moviesArray;
     }
 
 });
