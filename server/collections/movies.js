@@ -1,4 +1,4 @@
-var EMAIL_SEND_DELAY = 5 * 60 * 1000,
+var EMAIL_SEND_DELAY = 5 * 1000,
     newMovies = [],
     sendDelayedEmailNotifications = Du.debounce(function () {
         // Removing `isNew` marker
@@ -22,7 +22,8 @@ var EMAIL_SEND_DELAY = 5 * 60 * 1000,
             });
             console.log('Sending emails to: ', emails);
             App.sendEmail(emails, 'new-movies', {
-                movies: newMovies
+                movies: newMovies,
+                rootUrl: Meteor.absoluteUrl()
             });
         } else {
             console.log('There are no subscribers for new movies email');
