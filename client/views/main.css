@@ -11,12 +11,12 @@ html, body {
 
 .left-column {
     float: left;
-    width: 70%;
+    width: 65%;
     }
 
 .right-column {
     float: left;
-    width: 30%;
+    width: 35%;
     }
 
 .layout-trigger {
@@ -44,7 +44,7 @@ html, body {
 
 .controls {
     margin: 58px 20px 20px 0;
-    min-width: 370px;
+    min-width: 430px;
     }
 
 .icon-button {
