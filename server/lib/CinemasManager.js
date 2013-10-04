@@ -9,7 +9,7 @@ CinemasManager = {
     grabbers: {
         'html': function (dfd) {
             var request = CinemasManager._getRequestParamsFromCinema(this);
-            
+
             HTTP.call(request.method, request.url, request.opts, function (error, result) {
                 if (error) {
                     dfd.reject(error);
@@ -157,7 +157,7 @@ CinemasManager = {
             url: _.result(cinema, 'showingsUrl'),
             opts: _.extend({
                 timeout: REQUESTS_TIMEOUT
-            }, cinema.requestParams || {})
+            }, _.result(cinema, 'requestParams') || {})
         }
     }
 
