@@ -9,15 +9,19 @@ html, body {
     clear: both;
     }
 
+.layout {
+    min-width: 1180px;
+}
+
 .left-column {
-    float: left;
-    width: 65%;
-    }
+    margin-right: 450px;
+    position: relative;
+}
 
 .right-column {
-    float: left;
-    width: 35%;
-    }
+    float: right;
+    width: 450px;
+}
 
 .layout-trigger {
     position: absolute;
@@ -30,8 +34,7 @@ html, body {
     }
 
 .one-column .left-column {
-    width: 100%;
-    float: none;
+    margin-right: 0;
     }
 
 .one-column .right-column {
@@ -39,7 +42,7 @@ html, body {
     }
 
 .showings {
-    margin: 20px;
+    padding: 20px;
     }
 
 .controls {
