@@ -8,7 +8,9 @@ CinemasManager = {
 
     grabbers: {
         'html': function (dfd) {
-            HTTP.get(_.result(this, 'showingsUrl'), { timeout: REQUESTS_TIMEOUT }, function (error, result) {
+            var request = CinemasManager._getRequestParamsFromCinema(this);
+            
+            HTTP.call(request.method, request.url, request.opts, function (error, result) {
                 if (error) {
                     dfd.reject(error);
                 } else {
@@ -17,7 +19,9 @@ CinemasManager = {
             });
         },
         'json': function (dfd) {
-            HTTP.get(_.result(this, 'showingsUrl'), { timeout: REQUESTS_TIMEOUT }, function (error, result) {
+            var request = CinemasManager._getRequestParamsFromCinema(this);
+
+            HTTP.call(request.method, request.url, request.opts, function (error, result) {
                 if (error || !result.data) {
                     dfd.reject(error);
                 } else {
@@ -145,6 +149,16 @@ CinemasManager = {
         }
 
         return dfd;
+    },
+    
+    _getRequestParamsFromCinema: function (cinema) {
+        return {
+            method: cinema.requestType || 'GET',
+            url: _.result(cinema, 'showingsUrl'),
+            opts: _.extend({
+                timeout: REQUESTS_TIMEOUT
+            }, cinema.requestParams || {})
+        }
     }
 
 };
