@@ -260,21 +260,32 @@ Template.movie_info.events = {
 
     'click .movie-info-icon': function (event, tmpl) {
         var $dialog = tmpl.$dialog;
-
+        
         if (!$dialog) {
             var iconNode = event.target,
-                $dialogContent = $(iconNode).find('.movie-info');
-
+                $dialogContent = $(Template.movie_info_content(this)),
+                position = {
+                    my: 'left center',
+                    at: 'right center',
+                    of: iconNode
+                };
+                    
             $dialog = tmpl.$dialog = $dialogContent
                 .dialog({
                     autoOpen: false,
-                    position: {
-                        my: 'left center',
-                        at: 'right center',
-                        of: iconNode
-                    },
+                    position: position,
                     minWidth: 350,
-                    width: 550
+                    width: 550,
+                    open: function () {
+                        $dialogContent.find('img')
+                            .one('load', function () {
+                                $dialog.dialog('option', 'position', position);
+                            });
+                    },
+                    close: function () {
+                        tmpl.$dialog.remove();
+                        tmpl.$dialog = null;
+                    }
                 });
         }
 
