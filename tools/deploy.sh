@@ -47,7 +47,7 @@ echo "\nUnpacking new Meteor Movies bundle..."
 tar -xzf ${BUILD_DIR}/${BUNDLE_NAME}.tar.gz -C ${BUILD_DIR} 
 
 echo "\nStopping Meteor Movies web-app..."
-stop web-apps/meteor-movies || true
+sudo stop web-apps/meteor-movies || true
 
 echo "\nUpdating Meteor Movies bundle..."
 rm -rf ${DEPLOY_PATH}
@@ -65,4 +65,4 @@ echo "\nCleaning build directory..."
 rm -rf ${BUILD_DIR}
 
 echo "\nStarting Meteor Movies application..."
-start web-apps/meteor-movies
+sudo start web-apps/meteor-movies
