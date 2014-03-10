@@ -1,7 +1,6 @@
 // Overriding Meteor session's methods
 var _get = Session.get,
-    _set = Session.set,
-    undefined = void 0;
+    _set = Session.set;
 
 Session.set = function (key, value, useLocalStorage) {
     _set.apply(Session, arguments);
