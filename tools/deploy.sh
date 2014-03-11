@@ -38,6 +38,9 @@ cd ..
 echo "\nUpdating project repository..."
 git fetch && git reset --hard && git clean -df && git checkout ${BRANCH} && git pull && git submodule init && git submodule update
 
+echo "\nInstalling Meteorite packages..."
+mrt install
+
 echo "\nMaking bundle..."
 rm -rf ${BUILD_DIR}
 mkdir -p ${BUILD_DIR}

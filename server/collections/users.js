@@ -25,8 +25,10 @@ Meteor.publish('userData', function () {
         _id: this.userId
     }, {
         fields: {
+            'emails': 1,
             'admin': 1,
-            'notifyAbout': 1
+            'notifyAbout': 1,
+            'profile': 1
         }
     });
 });

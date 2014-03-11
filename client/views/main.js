@@ -22,8 +22,7 @@ Meteor.startup(function () {
             showingsTo: App.DAY_END_MINUTES,
             autoTime: true,
             disabledCinemas: {}
-        },
-        undefined = void 0;
+        };
 
     // Setting default session values
     _.each(SESSION_DEFAULTS, function (value, key) {

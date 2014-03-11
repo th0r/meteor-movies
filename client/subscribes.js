@@ -1,5 +1,7 @@
 Meteor.subscribe('cinemas');
 Meteor.subscribe('movies');
+Meteor.subscribe('userData');
+Meteor.subscribe('movie-synonyms');
 Meteor.autorun(function () {
     var currentShowingsDate = Session.get('currentShowingsDate');
     
@@ -7,5 +9,3 @@ Meteor.autorun(function () {
         Meteor.subscribe('showings', currentShowingsDate);
     }
 });
-Meteor.subscribe('userData');
-Meteor.subscribe('movie-synonyms');
