@@ -1,51 +1,26 @@
 // ==================================== Showings controls ====================================
 
 Template.showings_controls.rendered = function () {
-    var self = this,
-        activeTab,
-        $tabs = this.$tabs;
-
-    if ($tabs) {
-        activeTab = self.activeTab;
-        $tabs.tabs('refresh');
-        if (activeTab) {
-            $tabs.tabs('option', 'active', activeTab);
-        }
-    } else {
-        $tabs = this.$tabs = $(this.find('.control-tabs')).tabs({
-            activate: function () {
-                self.activeTab = $tabs.tabs('option', 'active');
-            }
-        });
-    }
+    $(this.find('.control-tabs')).tabs({});
 };
 
 // ==================================== Cinemas List ====================================
 
-Template.cinemas_list.created = function () {
-    var self = this;
-
-    // Automatically refreshing buttonset widget
-    this.buttonRefreshHandler = Deps.autorun(function () {
-        Session.get('disabledCinemas', true);
-        if (self.$buttons) {
-            self.$buttons.buttonset('refresh');
-        }
-    });
-};
-
 Template.cinemas_list.destroyed = function () {
     this.buttonRefreshHandler.stop();
+    this.buttonRefreshHandler = null;
     this.$buttons.buttonset('destroy');
+    this.$buttons = null;
 };
 
 Template.cinemas_list.rendered = function () {
-    if (this.$buttons) {
-        // Destroying old widget
-        this.$buttons.buttonset('destroy');
-    }
     // Making buttonset widget from checkboxes
-    this.$buttons = $(this.find('.cinemas')).buttonset();
+    var $buttons = this.$buttons = $(this.find('.cinemas')).buttonset();
+    // Automatically refreshing buttonset widget
+    this.buttonRefreshHandler = Deps.autorun(function () {
+        Session.get('disabledCinemas', true);
+        $buttons.buttonset('refresh');
+    });
 };
 
 Template.cinemas_list.events = {
@@ -64,8 +39,7 @@ Template.cinemas_list.cinemas = function () {
     disabledCinemas = Session.get('disabledCinemas', true);
 
     cinemas.forEach(function (cinema) {
-        cinema.disabled = !Showings.findOne({cinemaId: cinema.id});
-        cinema.selected = !cinema.disabled && !disabledCinemas[cinema.id];
+        cinema.selected = !disabledCinemas[cinema.id];
         cinema.lastUpdate = cinema.fetchDate ? moment(cinema.fetchDate).calendar().toLowerCase() : null;
     });
 
