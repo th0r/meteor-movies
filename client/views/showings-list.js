@@ -259,11 +259,14 @@ Template.movie_info.movie = function () {
 Template.movie_info.events = {
 
     'click .movie-info-icon': function (event, tmpl) {
-        var $dialog = tmpl.$dialog;
+        var data = this,
+            $dialog = tmpl.$dialog;
         
         if (!$dialog) {
             var iconNode = event.target,
-                $dialogContent = $(Template.movie_info_content(this)),
+                $dialogContent = $(Template.movie_info_content.extend({
+                    data: function () { return data; }
+                }).render().toHTML()),
                 position = {
                     my: 'left center',
                     at: 'right center',

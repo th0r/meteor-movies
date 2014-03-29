@@ -5,7 +5,9 @@
 
         {{> filter_controls_panel }}
         {{> settings_controls_panel }}
-        {{> admin_controls_panel }}
+        {{# if isAdmin }}
+            {{> admin_controls_panel }}
+        {{/ if }}
     </div>
 
 </template>
@@ -58,13 +60,11 @@
 </template>
 
 <template name="admin_controls_panel">
-    {{# if isAdmin }}
-        <div id="admin">
-            <div class="control control-admin">
-                {{> admin_controls }}
-            </div>
+    <div id="admin">
+        <div class="control control-admin">
+            {{> admin_controls }}
         </div>
-    {{/ if }}
+    </div>
 </template>
 
 <template name="cinemas_list">
@@ -78,9 +78,11 @@
 </template>
 
 <template name="cinema">
-    <input id="cinema-{{ id }}" class="cinema-button" type="checkbox"{{# if selected }} checked{{/ if }}{{# if disabled }} disabled{{/ if }}>
-        <label for="cinema-{{ id }}" data-id="{{ id }}"{{# if lastUpdate }} title="Последнее обновление: {{ lastUpdate }}"{{/ if }}>{{ shortName }}<i class="cinema-button-icon cinema-{{ id }}">•</i></label>
-    </input>
+    <input id="cinema-{{ id }}" class="cinema-button" type="checkbox" checked={{ selected }}>
+    <label for="cinema-{{ id }}" data-id="{{ id }}"
+           title="{{# if lastUpdate }}Последнее обновление: {{ lastUpdate }}{{/ if }}">
+        {{ shortName }}<i class="cinema-button-icon cinema-{{ id }}">•</i>
+    </label>
 </template>
 
 <template name="time_slider">
@@ -88,8 +90,7 @@
     <div class="control-time-text"></div>
     <div class="control-time-auto-wrap">
         <input id="control-time-auto" class="control-time-auto" type="checkbox">
-            <label for="control-time-auto">Не показывать прошедшие сеансы</label>
-        </input>
+        <label for="control-time-auto">Не показывать прошедшие сеансы</label>
     </div>
 </template>
 
@@ -120,7 +121,7 @@
 
 <template name="notification_settings">
     <label for="emailNewMovies">
-        <input id="emailNewMovies" type="checkbox"{{# if notifyAbout.newMovies }} checked{{/ if }}>
+        <input id="emailNewMovies" type="checkbox" checked={{ notifyAbout.newMovies }}>
         Посылать email о новых фильмах
     </label>
 </template>
