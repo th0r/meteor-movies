@@ -83,7 +83,18 @@ function register(info) {
 // ==================================== Login form ====================================
 
 Template.login_form.rendered = function () {
-    $('button').button();
+    var $buttons = $('button').button();
+
+    this.buttonSyncHandler = Deps.autorun(function () {
+        // Registering deps
+        Meteor.loggingIn();
+        $buttons.button('refresh');
+    });
+};
+
+Template.login_form.destroyed = function () {
+    this.buttonSyncHandler.stop();
+    delete this.buttonSyncHandler;
 };
 
 Template.login_form.events = {
