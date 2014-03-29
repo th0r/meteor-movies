@@ -5,7 +5,9 @@
 
         {{> filter_controls_panel }}
         {{> settings_controls_panel }}
-        {{> admin_controls_panel }}
+        {{# if isAdmin }}
+            {{> admin_controls_panel }}
+        {{/ if }}
     </div>
 
 </template>
@@ -58,13 +60,11 @@
 </template>
 
 <template name="admin_controls_panel">
-    {{# if isAdmin }}
-        <div id="admin">
-            <div class="control control-admin">
-                {{> admin_controls }}
-            </div>
+    <div id="admin">
+        <div class="control control-admin">
+            {{> admin_controls }}
         </div>
-    {{/ if }}
+    </div>
 </template>
 
 <template name="cinemas_list">

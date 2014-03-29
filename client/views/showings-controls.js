@@ -1,7 +1,27 @@
 // ==================================== Showings controls ====================================
 
 Template.showings_controls.rendered = function () {
-    $(this.find('.control-tabs')).tabs({});
+    this.$('.control-tabs').tabs({});
+};
+
+// ==================================== Admin controls panel ====================================
+
+function refreshTabs($tabs) {
+    var tabsWidget = $tabs.data('ui-tabs');
+
+    if (tabsWidget) {
+        tabsWidget.refresh();
+    }
+}
+
+Template.admin_controls_panel.rendered = function () {
+    this.$tabs = $(this.firstNode).closest('.control-tabs');
+    refreshTabs(this.$tabs);
+};
+
+Template.admin_controls_panel.destroyed = function () {
+    refreshTabs(this.$tabs);
+    delete this.$tabs;
 };
 
 // ==================================== Cinemas List ====================================
