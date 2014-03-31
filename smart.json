@@ -1,5 +1,6 @@
 {
   "packages": {
-    "fast-render": {}
+    "fast-render": {},
+    "fastclick": {}
   }
 }

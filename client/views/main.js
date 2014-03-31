@@ -4,6 +4,23 @@ function updateShowingsDate() {
     Session.set('currentShowingsDate', App.getShowingsFetchDate().toDate());
 }
 
+UI.body.events({
+
+    // Icon buttons highlighting on hover
+    'mouseenter .icon-button': function (event) {
+        $(event.target).addClass('ui-state-hover');
+    },
+    'mouseleave .icon-button': function (event) {
+        $(event.target).removeClass('ui-state-hover');
+    }
+
+});
+
+UI.body.rendered = function () {
+    // Initializing FastClick
+    FastClick.attach(document.body);
+};
+
 Meteor.startup(function () {
 
     var TMPL_DEBUG = false,
@@ -58,15 +75,5 @@ Meteor.startup(function () {
         });
 
     }
-    
-    // Icon buttons highlighting on hover
-    $(document).on({
-        'mouseenter': function () {
-            $(this).addClass('ui-state-hover');
-        },
-        'mouseleave': function () {
-            $(this).removeClass('ui-state-hover');
-        }
-    }, '.icon-button');
 
 });
