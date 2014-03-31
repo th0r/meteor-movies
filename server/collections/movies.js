@@ -1,4 +1,4 @@
-var EMAIL_SEND_DELAY = 5 * 1000,
+var EMAIL_SEND_DELAY = 5 * 60 * 1000,
     newMovies = [],
     sendDelayedEmailNotifications = Du.debounce(function () {
         // Removing `isNew` marker
@@ -13,7 +13,7 @@ var EMAIL_SEND_DELAY = 5 * 1000,
             .find({
                 'notifyAbout.newMovies': true
             }, {
-                fields: {emails: 1}
+                fields: { emails: 1 }
             })
             .fetch();
         if (subscribers.length) {
@@ -39,7 +39,7 @@ Meteor.startup(function () {
 
     // Sending email if new movies has been added
     Movies
-        .find({isNew: true, info: {$exists: true}})
+        .find({ isNew: true, info: { $exists: true } })
         .observe({
             'added': function (movie) {
                 console.log('New movie added: "' + movie.title + '"');
