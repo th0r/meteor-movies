@@ -264,15 +264,13 @@ Template.movie_info.events = {
         
         if (!$dialog) {
             var iconNode = event.target,
-                $dialogContent = $(Template.movie_info_content.extend({
-                    data: function () { return data; }
-                }).render().toHTML()),
                 position = {
                     my: 'left center',
                     at: 'right center',
                     of: iconNode
-                };
-                    
+                },
+                $dialogContent = $(UI.renderWithData(Template.movie_info_content, data).dom.elements());
+
             $dialog = tmpl.$dialog = $dialogContent
                 .dialog({
                     autoOpen: false,
