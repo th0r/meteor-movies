@@ -119,10 +119,11 @@ Template.showings_list.hasShowings = function () {
 Template.showings_list.showings = function () {
     var movies = {},
         moviesArray = [],
-        moviesFilter = new RegExp(Du.escapeRegexp(Session.get('moviesFilter')), 'i'),
+        moviesFilter = Session.get('moviesFilter'),
         disabledCinemas = [],
         sorting = Session.get('sorting', true),
-        now = moment();
+        now = moment(),
+        showingsQuery = {};
 
     _.each(Session.get('disabledCinemas', true) || {}, function (disabled, cinemaId) {
         if (disabled) {
@@ -130,11 +131,17 @@ Template.showings_list.showings = function () {
         }
     });
 
+    // Query optimizations (don't add unnecessary conditions)
+    if (disabledCinemas.length) {
+        showingsQuery.cinemaId = { $nin: disabledCinemas };
+    }
+
+    if (moviesFilter) {
+        showingsQuery.movie = { $regex: new RegExp(Du.escapeRegexp(moviesFilter), 'i') };
+    }
+
     Showings
-        .find({
-            cinemaId: {$nin: disabledCinemas},
-            movie: {$regex: moviesFilter}
-        })
+        .find(showingsQuery)
         .fetch()
         .forEach(function (showing) {
             var sessions = movies[showing.movie] = movies[showing.movie] || [];
@@ -147,7 +154,7 @@ Template.showings_list.showings = function () {
 
     // Converting movies to array, sorted by movie name
     _.each(movies, function (sessions, movieName) {
-        var movie = Movies.findOne({title: movieName}),
+        var movie = Movies.findOne({ title: movieName }),
             dateAdded = movie && movie.dateAdded;
 
         moviesArray.push({
