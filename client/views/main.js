@@ -16,11 +16,6 @@ UI.body.events({
 
 });
 
-UI.body.rendered = function () {
-    // Initializing FastClick
-    FastClick.attach(document.body);
-};
-
 Meteor.startup(function () {
 
     var TMPL_DEBUG = false,
